@@ -1,5 +1,11 @@
 # 🎓 University Course Registration System
 
+## 🌐 Live App
+
+You can try the project here:
+
+https://uwcourseregistrationsystem.vercel.app/
+
 ## 📌 Project Overview
 
 This project is an advisor-student communication channel for course registration support. Students can submit registration help requests, and those requests reach an advisor queue where advisors can review student needs, check registration risks, and decide the next best action.
