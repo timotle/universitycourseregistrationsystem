@@ -6,18 +6,20 @@
   <title>Smart Registration Planner</title>
   <style>
     :root {
-      --ink: #172026;
-      --muted: #62707b;
-      --line: #dbe3e8;
-      --surface: #f6f8f8;
+      --ink: #1f2933;
+      --muted: #7d8792;
+      --line: #e7ebf2;
+      --surface: #f4f6fb;
       --white: #ffffff;
-      --green: #237a57;
-      --red: #b43f36;
-      --amber: #a56d1f;
-      --blue: #25638d;
-      --teal: #187775;
-      --plum: #77517e;
-      --shadow: 0 14px 28px rgba(19, 33, 43, 0.11);
+      --green: #20a67a;
+      --red: #ef6b72;
+      --amber: #ffa63f;
+      --blue: #5d5ce2;
+      --teal: #41c4a0;
+      --plum: #8a70e8;
+      --navy: #0f1728;
+      --navy-2: #1d2636;
+      --shadow: 0 18px 44px rgba(26, 36, 58, 0.12);
     }
 
     * { box-sizing: border-box; }
@@ -27,8 +29,9 @@
       color: var(--ink);
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background:
-        linear-gradient(180deg, rgba(255,255,255,0.94), rgba(246,248,248,0.97)),
-        url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23dbe3e8' stroke-width='1'%3E%3Cpath d='M0 20h80M0 60h80M20 0v80M60 0v80'/%3E%3C/g%3E%3C/svg%3E");
+        radial-gradient(circle at 72% -10%, rgba(117, 119, 255, 0.20), transparent 34%),
+        radial-gradient(circle at 28% 0%, rgba(65, 196, 160, 0.13), transparent 28%),
+        linear-gradient(135deg, #eef2fb 0%, #f8fafc 42%, #eef3ff 100%);
     }
 
     button, input, select, textarea { font: inherit; }
@@ -37,7 +40,7 @@
       border: 1px solid var(--line);
       background: var(--white);
       color: var(--ink);
-      border-radius: 8px;
+      border-radius: 16px;
       padding: 9px 12px;
       cursor: pointer;
       transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
@@ -52,19 +55,21 @@
     .app-shell {
       min-height: 100vh;
       display: grid;
-      grid-template-columns: 240px minmax(0, 1fr);
+      grid-template-columns: 244px minmax(0, 1fr);
+      background: rgba(255, 255, 255, 0.25);
     }
 
     .sidebar {
-      background: #10232b;
+      background: var(--navy);
       color: #f5fbfb;
-      padding: 22px 18px;
+      padding: 24px 18px;
       display: flex;
       flex-direction: column;
       gap: 20px;
       position: sticky;
       top: 0;
       min-height: 100vh;
+      box-shadow: 16px 0 48px rgba(15, 23, 40, 0.16);
     }
 
     .brand {
@@ -77,8 +82,8 @@
     .brand-mark {
       width: 34px;
       height: 34px;
-      border-radius: 8px;
-      background: linear-gradient(135deg, #78d5bb 0%, #f4c46c 52%, #e46d61 100%);
+      border-radius: 999px;
+      background: conic-gradient(from 12deg, #63e6be, #ffd166, #ef6b72, #7c7cff, #63e6be);
       display: grid;
       place-items: center;
       color: #10232b;
@@ -104,14 +109,18 @@
       align-items: center;
       gap: 10px;
       min-height: 42px;
+      padding: 11px 14px;
+      border-radius: 18px;
+      font-weight: 750;
     }
 
     .nav button.active {
-      background: rgba(255,255,255,0.12);
-      border-color: rgba(255,255,255,0.16);
+      background: #2a3446;
+      border-color: rgba(255,255,255,0.08);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
     }
 
-    .nav i, .tool-button i {
+    .tool-button i {
       display: inline-grid;
       place-items: center;
       width: 22px;
@@ -127,9 +136,9 @@
     .advisor-card {
       margin-top: auto;
       border: 1px solid rgba(255,255,255,0.16);
-      border-radius: 8px;
-      padding: 14px;
-      background: rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 16px;
+      background: rgba(255,255,255,0.07);
     }
 
     .advisor-card b { display: block; font-size: 13px; }
@@ -143,8 +152,8 @@
       justify-content: space-between;
       gap: 18px;
       padding: 18px 26px;
-      border-bottom: 1px solid var(--line);
-      background: rgba(255,255,255,0.86);
+      border-bottom: 1px solid rgba(231, 235, 242, 0.85);
+      background: rgba(248,250,252,0.82);
       backdrop-filter: blur(12px);
       position: sticky;
       top: 0;
@@ -177,12 +186,13 @@
       background: var(--white);
       font-size: 12px;
       white-space: nowrap;
+      box-shadow: 0 8px 22px rgba(26, 36, 58, 0.05);
     }
 
     .primary {
-      background: #1b6b62;
+      background: #1f7d70;
       color: white;
-      border-color: #1b6b62;
+      border-color: #1f7d70;
       font-weight: 700;
     }
 
@@ -191,7 +201,7 @@
 
     .screen {
       display: none;
-      padding: 22px 26px 34px;
+      padding: 26px 30px 38px;
     }
 
     .screen.active { display: block; }
@@ -206,8 +216,8 @@
     .panel, .course-card, .backup-card, .section-row, .metric-card {
       background: var(--white);
       border: 1px solid var(--line);
-      border-radius: 8px;
-      box-shadow: 0 1px 0 rgba(19, 33, 43, 0.03);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
     }
 
     .panel { overflow: hidden; }
@@ -219,7 +229,7 @@
       align-items: center;
       padding: 14px;
       border-bottom: 1px solid var(--line);
-      background: #fbfcfc;
+      background: rgba(255,255,255,0.72);
     }
 
     .panel-header h2, .section-title {
@@ -240,7 +250,7 @@
     select, input, textarea {
       width: 100%;
       border: 1px solid var(--line);
-      border-radius: 8px;
+      border-radius: 16px;
       background: var(--white);
       min-height: 38px;
       padding: 8px 10px;
@@ -259,6 +269,7 @@
       padding: 12px;
       cursor: grab;
       user-select: none;
+      background: linear-gradient(145deg, #ffffff, #f7f9fe);
     }
 
     .course-card.dragging { opacity: 0.55; }
@@ -289,6 +300,7 @@
       min-height: 32px;
       padding: 6px 9px;
       font-size: 12px;
+      border-radius: 999px;
     }
 
     .course-card.hidden { display: none; }
@@ -300,6 +312,13 @@
       font-size: 11px;
       font-weight: 800;
       white-space: nowrap;
+    }
+
+    .course-card .seat-tag,
+    .section-row .seat-tag {
+      color: #ffffff;
+      font-weight: 900;
+      letter-spacing: 0;
     }
 
     .seat-open { background: var(--green); }
@@ -328,7 +347,7 @@
       display: grid;
       grid-template-columns: 54px repeat(5, minmax(68px, 1fr));
       border: 1px solid var(--line);
-      border-radius: 8px;
+      border-radius: 22px;
       overflow: auto;
       background: var(--white);
     }
@@ -338,7 +357,7 @@
       padding: 10px;
       border-right: 1px solid var(--line);
       border-bottom: 1px solid var(--line);
-      background: #f5f8f8;
+      background: #f7f8fd;
       color: var(--muted);
       font-size: 12px;
       font-weight: 800;
@@ -357,18 +376,18 @@
       background: #ffffff;
     }
 
-    .day-cell.drop-target { background: #e8f4f1; }
+    .day-cell.drop-target { background: #e8faf4; }
 
     .event {
       display: grid;
       gap: 4px;
       border-left: 4px solid var(--teal);
       background: #edf8f5;
-      border-radius: 7px;
+      border-radius: 14px;
       padding: 8px;
       font-size: 12px;
       cursor: grab;
-      box-shadow: 0 5px 12px rgba(24, 119, 117, 0.10);
+      box-shadow: 0 8px 18px rgba(24, 119, 117, 0.12);
     }
 
     .event.finance { border-color: var(--blue); background: #edf5fb; }
@@ -385,13 +404,13 @@
 
     .message {
       padding: 11px;
-      border-radius: 8px;
+      border-radius: 20px;
       font-size: 13px;
       line-height: 1.45;
     }
 
-    .message.user { background: #f0f4f6; }
-    .message.ai { background: #eef8f1; border: 1px solid rgba(35, 122, 87, 0.18); }
+    .message.user { background: #eef2f7; }
+    .message.ai { background: #eafaf3; border: 1px solid rgba(32, 166, 122, 0.18); }
 
     .goal-strip {
       display: grid;
@@ -403,7 +422,7 @@
     .goal-card {
       background: var(--white);
       border: 1px solid var(--line);
-      border-radius: 8px;
+      border-radius: 22px;
       padding: 14px;
       min-height: 86px;
     }
@@ -460,7 +479,7 @@
       width: 100%;
       border-collapse: collapse;
       overflow: hidden;
-      border-radius: 8px;
+      border-radius: 22px;
       border: 1px solid var(--line);
       background: var(--white);
     }
@@ -476,7 +495,7 @@
 
     .requirement-table th {
       color: var(--muted);
-      background: #f5f8f8;
+      background: #f7f8fd;
       font-size: 12px;
     }
 
@@ -497,7 +516,7 @@
     .step-card {
       background: var(--white);
       border: 1px solid var(--line);
-      border-radius: 8px;
+      border-radius: 22px;
       padding: 14px;
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
@@ -525,7 +544,7 @@
     .empty-state {
       background: #f2f6f6;
       border: 1px dashed #bfd0d7;
-      border-radius: 8px;
+      border-radius: 22px;
       padding: 18px;
       color: var(--muted);
       font-size: 13px;
@@ -542,16 +561,26 @@
     .student-card {
       background: var(--white);
       border: 1px solid var(--line);
-      border-radius: 8px;
+      border-radius: 24px;
       padding: 15px;
       display: grid;
       gap: 12px;
-      box-shadow: 0 1px 0 rgba(19, 33, 43, 0.03);
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .student-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(93, 92, 226, 0.08), transparent 45%);
+      pointer-events: none;
     }
 
     .student-card.selected {
-      border-color: #1b6b62;
-      box-shadow: 0 0 0 3px rgba(27, 107, 98, 0.14);
+      border-color: #5d5ce2;
+      box-shadow: 0 0 0 4px rgba(93, 92, 226, 0.12), var(--shadow);
     }
 
     .student-card h2 {
@@ -587,8 +616,8 @@
       font-size: 13px;
       padding: 10px;
       border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #fbfcfc;
+      border-radius: 18px;
+      background: #fbfcff;
     }
 
     .dot {
@@ -611,10 +640,10 @@
     }
 
     .summary-band {
-      background: #10232b;
+      background: var(--navy-2);
       color: #f6fbfb;
-      border-radius: 8px;
-      padding: 22px;
+      border-radius: 28px;
+      padding: 28px;
       min-height: 185px;
       display: grid;
       align-content: center;
@@ -687,7 +716,7 @@
     .bar.red > i { background: var(--red); }
     .map {
       min-height: 320px;
-      border-radius: 8px;
+      border-radius: 24px;
       border: 1px solid var(--line);
       background:
         linear-gradient(90deg, transparent 49%, rgba(23,32,38,0.08) 50%, transparent 51%),
@@ -699,7 +728,7 @@
 
     .building {
       position: absolute;
-      border-radius: 8px;
+      border-radius: 18px;
       padding: 9px;
       background: white;
       border: 1px solid var(--line);
@@ -730,8 +759,8 @@
     }
 
     .backup-card.selected {
-      border-color: #1b6b62;
-      box-shadow: 0 0 0 3px rgba(27, 107, 98, 0.14);
+      border-color: #5d5ce2;
+      box-shadow: 0 0 0 4px rgba(93, 92, 226, 0.12), var(--shadow);
     }
 
     .backup-top {
@@ -750,7 +779,7 @@
 
     .mini-day {
       background: #f2f6f6;
-      border-radius: 7px;
+      border-radius: 16px;
       padding: 5px;
       display: grid;
       align-content: start;
@@ -759,7 +788,7 @@
 
     .mini-block {
       min-height: 18px;
-      border-radius: 5px;
+      border-radius: 999px;
       background: #1b6b62;
     }
 
@@ -771,9 +800,9 @@
       position: fixed;
       right: 20px;
       bottom: 20px;
-      background: #10232b;
+      background: var(--navy);
       color: white;
-      border-radius: 8px;
+      border-radius: 18px;
       padding: 12px 14px;
       box-shadow: var(--shadow);
       opacity: 0;
@@ -800,7 +829,7 @@
         flex-wrap: wrap;
       }
       .nav {
-        grid-template-columns: repeat(6, minmax(96px, 1fr));
+        grid-template-columns: repeat(7, minmax(96px, 1fr));
         flex: 1 1 640px;
       }
       .advisor-card { display: none; }
@@ -819,6 +848,337 @@
       .goal-strip { grid-template-columns: 1fr; }
       .requirement-table { display: block; overflow-x: auto; }
     }
+
+    /* Dark dashboard visual system inspired by the provided reference UI. */
+    body {
+      background: #0f1728;
+      color: #f8fafc;
+    }
+
+    .app-shell {
+      background: #0f1728;
+      grid-template-columns: 244px minmax(0, 1fr);
+    }
+
+    .sidebar {
+      background: #0f1728;
+      border-right: 0;
+      box-shadow: none;
+    }
+
+    .brand {
+      margin-bottom: 18px;
+    }
+
+    .brand-mark {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      color: #0f1728;
+      box-shadow: 0 12px 34px rgba(0, 0, 0, 0.24);
+    }
+
+    .brand strong {
+      color: #ffffff;
+      font-size: 16px;
+    }
+
+    .brand span,
+    .advisor-card p {
+      color: #aab3c2;
+    }
+
+    .nav {
+      gap: 14px;
+    }
+
+    .nav button {
+      color: #ffffff;
+      min-height: 48px;
+      border-radius: 18px;
+      padding: 13px 16px;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .nav button.active {
+      background: #303a4c;
+      border-color: rgba(255, 255, 255, 0.08);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+    }
+
+    .advisor-card {
+      background: #202a3a;
+      border-color: #354155;
+      color: #ffffff;
+    }
+
+    main {
+      background: #111a2b;
+      border-radius: 0;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      background: #111a2b;
+      border-bottom: 0;
+      color: #ffffff;
+      padding: 24px 32px 18px;
+      backdrop-filter: none;
+    }
+
+    h1,
+    .panel-header h2,
+    .section-title,
+    .student-card h2,
+    .step-card h3 {
+      color: #ffffff;
+    }
+
+    .topbar .pill {
+      background: #202a3a;
+      border-color: #334056;
+      color: #d6dce7;
+      box-shadow: none;
+    }
+
+    .topbar .pill.danger {
+      color: #ffd0d5;
+      border-color: rgba(239, 107, 114, 0.42);
+    }
+
+    .topbar .pill.success {
+      color: #b7f4dd;
+      border-color: rgba(32, 166, 122, 0.42);
+    }
+
+    .screen {
+      padding: 26px 32px 42px;
+    }
+
+    .summary-band,
+    .panel {
+      background: #202a3a;
+      border: 1px solid #2d394d;
+      color: #ffffff;
+      box-shadow: none;
+    }
+
+    .summary-band {
+      min-height: 200px;
+      padding: 34px;
+    }
+
+    .summary-band p,
+    .panel .tiny-note,
+    .student-card p,
+    .goal-card span,
+    .goal-card p,
+    .section-row span,
+    .event span,
+    .metric-card span,
+    .course-card p {
+      color: #aeb7c7;
+    }
+
+    .panel-header {
+      background: transparent;
+      border-bottom-color: #354155;
+      padding: 22px 24px;
+    }
+
+    .panel-body {
+      padding: 24px;
+    }
+
+    .goal-card,
+    .step-card,
+    .section-row,
+    .backup-card,
+    .metric-card,
+    .course-card {
+      background: #202a3a;
+      border-color: #354155;
+      color: #ffffff;
+      box-shadow: none;
+    }
+
+    .student-card {
+      border: 0;
+      color: #172026;
+      box-shadow: none;
+      min-height: 230px;
+      padding: 18px;
+    }
+
+    .student-card:nth-child(1) { background: #ffe3c4; }
+    .student-card:nth-child(2) { background: #d7dce6; }
+    .student-card:nth-child(3) { background: #a8f0c9; }
+    .student-card:nth-child(4) { background: #c8e3ff; }
+
+    .student-card::before {
+      display: none;
+    }
+
+    .student-card h2 {
+      color: #171f2b;
+    }
+
+    .student-card p {
+      color: rgba(23, 31, 43, 0.72);
+    }
+
+    .student-card.selected {
+      border: 0;
+      box-shadow: 0 0 0 4px rgba(255,255,255,0.34);
+    }
+
+    .student-card .status-chip {
+      background: rgba(255,255,255,0.55);
+    }
+
+    .calendar,
+    .requirement-table,
+    select,
+    input,
+    textarea {
+      background: #151f31;
+      border-color: #354155;
+      color: #ffffff;
+    }
+
+    .cal-head,
+    .time-cell,
+    .requirement-table th {
+      background: #1a2537;
+      color: #d4dae5;
+      border-color: #354155;
+    }
+
+    .day-cell {
+      background: #151f31;
+      border-color: #2d394d;
+    }
+
+    .day-cell.drop-target {
+      background: #203e42;
+    }
+
+    .event {
+      background: #24394a;
+      color: #ffffff;
+      box-shadow: none;
+    }
+
+    .event.finance { background: #243957; }
+    .event.stats { background: #302f55; }
+    .event.warn { background: #4a2b34; }
+
+    .message.user {
+      background: #151f31;
+      color: #ffffff;
+    }
+
+    .message.ai {
+      background: #193a34;
+      border-color: rgba(78, 220, 170, 0.2);
+      color: #ffffff;
+    }
+
+    .status-list li,
+    .score-row,
+    .empty-state {
+      background: #151f31;
+      border-color: #354155;
+      color: #ffffff;
+    }
+
+    .map {
+      background:
+        linear-gradient(90deg, transparent 49%, rgba(255,255,255,0.06) 50%, transparent 51%),
+        linear-gradient(0deg, transparent 49%, rgba(255,255,255,0.06) 50%, transparent 51%),
+        #151f31;
+      border-color: #354155;
+    }
+
+    .building {
+      background: #202a3a;
+      border-color: #354155;
+      color: #ffffff;
+    }
+
+    .mini-day {
+      background: #151f31;
+    }
+
+    .primary {
+      background: #247d70;
+      border-color: #247d70;
+      color: #ffffff;
+    }
+
+    button {
+      background: #151f31;
+      border-color: #354155;
+      color: #ffffff;
+    }
+
+    button:hover {
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.22);
+    }
+
+    .pill,
+    .status-chip {
+      box-shadow: none;
+    }
+
+    @media (max-width: 1180px) {
+      .app-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        background: #0f1728;
+        min-height: auto;
+        position: static;
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .brand {
+        margin-bottom: 0;
+      }
+
+      .nav {
+        grid-template-columns: repeat(7, minmax(112px, 1fr));
+        flex: 1 1 760px;
+      }
+
+      .advisor-card {
+        display: none;
+      }
+    }
+
+    @media (max-width: 780px) {
+      .sidebar {
+        padding: 18px 16px;
+      }
+
+      .brand {
+        width: 100%;
+      }
+
+      .nav {
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+      }
+
+      .nav button {
+        min-height: 42px;
+        font-size: 14px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -833,13 +1193,13 @@
       </div>
 
       <nav class="nav" aria-label="Prototype screens">
-        <button class="active" data-screen="queue"><i>Q</i>Student Queue</button>
-        <button data-screen="builder"><i>W</i>Weekly Builder</button>
-        <button data-screen="assistant"><i>P</i>Plan Review</button>
-        <button data-screen="checks"><i>C</i>Checks</button>
-        <button data-screen="alternatives"><i>S</i>Sections</button>
-        <button data-screen="backups"><i>B</i>Backups</button>
-        <button data-screen="nextSteps"><i>N</i>Next Steps</button>
+        <button class="active" data-screen="queue">Student Queue</button>
+        <button data-screen="builder">Weekly Builder</button>
+        <button data-screen="assistant">Plan Review</button>
+        <button data-screen="checks">Checks</button>
+        <button data-screen="alternatives">Sections</button>
+        <button data-screen="backups">Backups</button>
+        <button data-screen="nextSteps">Next Steps</button>
       </nav>
 
       <div class="advisor-card">
@@ -1016,26 +1376,13 @@
       </section>
 
       <section class="screen" id="alternatives">
-        <div class="two-col">
-          <section class="panel">
-            <div class="panel-header">
-              <h2>Alternative Sections</h2>
-              <span class="pill">Sorted by requirement value</span>
-            </div>
-            <div class="panel-body section-list" id="sectionList"></div>
-          </section>
-          <section class="panel">
-            <div class="panel-header"><h2>Registration Picture</h2><span class="pill success">Clear path</span></div>
-            <div class="panel-body">
-              <div class="map" aria-label="Campus commute map">
-                <div class="building b1">Gates Hall</div>
-                <div class="building b2">Smith Hall</div>
-                <div class="building b3">Arts Hall</div>
-                <div class="route"></div>
-              </div>
-            </div>
-          </section>
-        </div>
+        <section class="panel">
+          <div class="panel-header">
+            <h2>Alternative Sections</h2>
+            <span class="pill">Sorted by requirement value</span>
+          </div>
+          <div class="panel-body section-list" id="sectionList"></div>
+        </section>
       </section>
 
       <section class="screen" id="backups">
