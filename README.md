@@ -6,6 +6,12 @@ You can try the project here:
 
 https://uwcourseregistrationsystem.vercel.app/
 
+## 📁 Project Documentation
+
+You can view our milestones, product workbook, and other project documentation here:
+
+https://drive.google.com/drive/folders/1wLqfzgl5gKaewQ-XQvSlbI8jXvkFMb11?usp=sharing
+
 ## 📌 Project Overview
 
 This project is an advisor-student communication channel for course registration support. Students can submit registration help requests, and those requests reach an advisor queue where advisors can review student needs, check registration risks, and decide the next best action.
