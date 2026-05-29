@@ -1,0 +1,1843 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Smart Registration Planner</title>
+  <style>
+    :root {
+      --ink: #172026;
+      --muted: #62707b;
+      --line: #dbe3e8;
+      --surface: #f6f8f8;
+      --white: #ffffff;
+      --green: #237a57;
+      --red: #b43f36;
+      --amber: #a56d1f;
+      --blue: #25638d;
+      --teal: #187775;
+      --plum: #77517e;
+      --shadow: 0 14px 28px rgba(19, 33, 43, 0.11);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.94), rgba(246,248,248,0.97)),
+        url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23dbe3e8' stroke-width='1'%3E%3Cpath d='M0 20h80M0 60h80M20 0v80M60 0v80'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    button, input, select, textarea { font: inherit; }
+
+    button {
+      border: 1px solid var(--line);
+      background: var(--white);
+      color: var(--ink);
+      border-radius: 8px;
+      padding: 9px 12px;
+      cursor: pointer;
+      transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+    }
+
+    button:hover { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(19, 33, 43, 0.10); }
+    button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+      outline: 3px solid rgba(37, 99, 141, 0.28);
+      outline-offset: 2px;
+    }
+
+    .app-shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 240px minmax(0, 1fr);
+    }
+
+    .sidebar {
+      background: #10232b;
+      color: #f5fbfb;
+      padding: 22px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      position: sticky;
+      top: 0;
+      min-height: 100vh;
+    }
+
+    .brand {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #78d5bb 0%, #f4c46c 52%, #e46d61 100%);
+      display: grid;
+      place-items: center;
+      color: #10232b;
+      font-weight: 900;
+      flex: 0 0 auto;
+    }
+
+    .brand strong { display: block; font-size: 15px; line-height: 1.15; }
+    .brand span { color: #a9bac0; font-size: 12px; }
+
+    .nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .nav button {
+      width: 100%;
+      color: #eaf5f4;
+      background: transparent;
+      border-color: transparent;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 42px;
+    }
+
+    .nav button.active {
+      background: rgba(255,255,255,0.12);
+      border-color: rgba(255,255,255,0.16);
+    }
+
+    .nav i, .tool-button i {
+      display: inline-grid;
+      place-items: center;
+      width: 22px;
+      height: 22px;
+      border: 1px solid currentColor;
+      border-radius: 7px;
+      font-style: normal;
+      font-size: 12px;
+      font-weight: 800;
+      flex: 0 0 auto;
+    }
+
+    .advisor-card {
+      margin-top: auto;
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 8px;
+      padding: 14px;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .advisor-card b { display: block; font-size: 13px; }
+    .advisor-card p { color: #b8c8ce; font-size: 12px; line-height: 1.5; margin: 7px 0 0; }
+
+    main { min-width: 0; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 18px 26px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,0.86);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+
+    .student-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      min-width: 0;
+    }
+
+    h1 {
+      font-size: 20px;
+      line-height: 1.1;
+      margin: 0;
+      letter-spacing: 0;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      color: var(--muted);
+      background: var(--white);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .primary {
+      background: #1b6b62;
+      color: white;
+      border-color: #1b6b62;
+      font-weight: 700;
+    }
+
+    .danger { color: var(--red); border-color: rgba(180, 63, 54, 0.3); }
+    .success { color: var(--green); border-color: rgba(35, 122, 87, 0.3); }
+
+    .screen {
+      display: none;
+      padding: 22px 26px 34px;
+    }
+
+    .screen.active { display: block; }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: minmax(220px, 0.82fr) minmax(430px, 1.35fr) minmax(250px, 0.9fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel, .course-card, .backup-card, .section-row, .metric-card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 1px 0 rgba(19, 33, 43, 0.03);
+    }
+
+    .panel { overflow: hidden; }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      padding: 14px;
+      border-bottom: 1px solid var(--line);
+      background: #fbfcfc;
+    }
+
+    .panel-header h2, .section-title {
+      font-size: 14px;
+      margin: 0;
+      letter-spacing: 0;
+    }
+
+    .panel-body { padding: 14px; }
+
+    .filters {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    select, input, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--white);
+      min-height: 38px;
+      padding: 8px 10px;
+      color: var(--ink);
+    }
+
+    textarea {
+      min-height: 96px;
+      resize: vertical;
+      line-height: 1.45;
+    }
+
+    .course-list { display: grid; gap: 10px; }
+
+    .course-card {
+      padding: 12px;
+      cursor: grab;
+      user-select: none;
+    }
+
+    .course-card.dragging { opacity: 0.55; }
+
+    .course-card strong {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 13px;
+    }
+
+    .course-card p, .tiny-note {
+      color: var(--muted);
+      margin: 7px 0 0;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .course-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .course-actions button {
+      min-height: 32px;
+      padding: 6px 9px;
+      font-size: 12px;
+    }
+
+    .course-card.hidden { display: none; }
+
+    .seat-tag {
+      border-radius: 999px;
+      color: white;
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .seat-open { background: var(--green); }
+    .seat-low { background: var(--amber); }
+    .seat-closed { background: var(--red); }
+
+    .calendar-tools {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .tool-group { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .tool-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 38px;
+    }
+
+    .calendar {
+      display: grid;
+      grid-template-columns: 54px repeat(5, minmax(68px, 1fr));
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: auto;
+      background: var(--white);
+    }
+
+    .cal-head, .time-cell {
+      min-height: 42px;
+      padding: 10px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background: #f5f8f8;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    .time-cell { position: static; min-height: 86px; }
+
+    .day-cell {
+      min-height: 86px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 7px;
+      background: #ffffff;
+    }
+
+    .day-cell.drop-target { background: #e8f4f1; }
+
+    .event {
+      display: grid;
+      gap: 4px;
+      border-left: 4px solid var(--teal);
+      background: #edf8f5;
+      border-radius: 7px;
+      padding: 8px;
+      font-size: 12px;
+      cursor: grab;
+      box-shadow: 0 5px 12px rgba(24, 119, 117, 0.10);
+    }
+
+    .event.finance { border-color: var(--blue); background: #edf5fb; }
+    .event.stats { border-color: var(--plum); background: #f7f1f8; }
+    .event.warn { border-color: var(--red); background: #fff1ef; }
+
+    .event b { font-size: 12px; }
+    .event span { color: var(--muted); }
+
+    .ai-thread {
+      display: grid;
+      gap: 12px;
+    }
+
+    .message {
+      padding: 11px;
+      border-radius: 8px;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .message.user { background: #f0f4f6; }
+    .message.ai { background: #eef8f1; border: 1px solid rgba(35, 122, 87, 0.18); }
+
+    .goal-strip {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) repeat(3, minmax(130px, 0.45fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .goal-card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      min-height: 86px;
+    }
+
+    .goal-card b {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .goal-card span, .goal-card p {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+      margin: 0;
+    }
+
+    .requirement-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 9px;
+    }
+
+    .status-chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 22px;
+      border-radius: 999px;
+      padding: 3px 7px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #244047;
+      background: #e8eef0;
+    }
+
+    .status-chip.good { color: var(--green); background: #e9f6ef; }
+    .status-chip.warn { color: var(--amber); background: #fff5df; }
+    .status-chip.bad { color: var(--red); background: #fff0ee; }
+    .status-chip.blue { color: var(--blue); background: #edf5fb; }
+
+    .action-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .action-grid button {
+      text-align: left;
+      min-height: 42px;
+    }
+
+    .requirement-table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--white);
+    }
+
+    .requirement-table th,
+    .requirement-table td {
+      padding: 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      font-size: 13px;
+      vertical-align: top;
+    }
+
+    .requirement-table th {
+      color: var(--muted);
+      background: #f5f8f8;
+      font-size: 12px;
+    }
+
+    .requirement-table tr:last-child td { border-bottom: 0; }
+
+    .next-step-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 0.45fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .step-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .step-card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .step-card.completed {
+      background: #f5faf7;
+      border-color: rgba(35, 122, 87, 0.28);
+    }
+
+    .step-card h3 {
+      font-size: 14px;
+      margin: 0 0 7px;
+      letter-spacing: 0;
+    }
+
+    .step-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .empty-state {
+      background: #f2f6f6;
+      border: 1px dashed #bfd0d7;
+      border-radius: 8px;
+      padding: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .queue-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(220px, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .student-card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 15px;
+      display: grid;
+      gap: 12px;
+      box-shadow: 0 1px 0 rgba(19, 33, 43, 0.03);
+    }
+
+    .student-card.selected {
+      border-color: #1b6b62;
+      box-shadow: 0 0 0 3px rgba(27, 107, 98, 0.14);
+    }
+
+    .student-card h2 {
+      margin: 0;
+      font-size: 16px;
+      letter-spacing: 0;
+    }
+
+    .student-card p {
+      color: var(--muted);
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .student-card .step-meta {
+      margin-top: -2px;
+    }
+
+    .status-list, .score-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .status-list li, .score-row {
+      display: grid;
+      grid-template-columns: 24px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      font-size: 13px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbfcfc;
+    }
+
+    .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: var(--green);
+      justify-self: center;
+    }
+
+    .dot.red { background: var(--red); }
+    .dot.amber { background: var(--amber); }
+
+    .hero-band {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(320px, 0.9fr);
+      gap: 18px;
+      align-items: stretch;
+      margin-bottom: 18px;
+    }
+
+    .summary-band {
+      background: #10232b;
+      color: #f6fbfb;
+      border-radius: 8px;
+      padding: 22px;
+      min-height: 185px;
+      display: grid;
+      align-content: center;
+      gap: 16px;
+    }
+
+    .summary-band h2 {
+      font-size: 28px;
+      margin: 0;
+      letter-spacing: 0;
+      max-width: 780px;
+    }
+
+    .summary-band p {
+      color: #bbccd1;
+      max-width: 780px;
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .metric-card { padding: 14px; }
+    .metric-card b { display: block; font-size: 24px; }
+    .metric-card span { color: var(--muted); font-size: 12px; }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(300px, 0.85fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .section-list, .backup-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .section-row {
+      display: grid;
+      grid-template-columns: minmax(170px, 1fr) repeat(4, minmax(100px, auto));
+      gap: 12px;
+      align-items: center;
+      padding: 13px;
+    }
+
+    .section-row strong { font-size: 13px; }
+    .section-row span { color: var(--muted); font-size: 12px; }
+
+    .bar {
+      height: 8px;
+      border-radius: 999px;
+      background: #e5ecef;
+      overflow: hidden;
+      min-width: 92px;
+    }
+
+    .bar > i {
+      display: block;
+      height: 100%;
+      width: var(--w);
+      background: var(--green);
+    }
+
+    .bar.amber > i { background: var(--amber); }
+    .bar.red > i { background: var(--red); }
+    .map {
+      min-height: 320px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(90deg, transparent 49%, rgba(23,32,38,0.08) 50%, transparent 51%),
+        linear-gradient(0deg, transparent 49%, rgba(23,32,38,0.08) 50%, transparent 51%),
+        #edf3f3;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .building {
+      position: absolute;
+      border-radius: 8px;
+      padding: 9px;
+      background: white;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .b1 { left: 10%; top: 18%; }
+    .b2 { right: 13%; top: 26%; }
+    .b3 { left: 42%; bottom: 18%; }
+    .route {
+      position: absolute;
+      left: 25%;
+      top: 35%;
+      width: 50%;
+      height: 32%;
+      border: 3px dashed #1b6b62;
+      border-left: 0;
+      border-bottom: 0;
+      border-radius: 0 80px 0 0;
+    }
+
+    .backup-card {
+      padding: 14px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .backup-card.selected {
+      border-color: #1b6b62;
+      box-shadow: 0 0 0 3px rgba(27, 107, 98, 0.14);
+    }
+
+    .backup-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: start;
+    }
+
+    .mini-week {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 5px;
+      min-height: 92px;
+    }
+
+    .mini-day {
+      background: #f2f6f6;
+      border-radius: 7px;
+      padding: 5px;
+      display: grid;
+      align-content: start;
+      gap: 5px;
+    }
+
+    .mini-block {
+      min-height: 18px;
+      border-radius: 5px;
+      background: #1b6b62;
+    }
+
+    .mini-block.blue { background: var(--blue); }
+    .mini-block.plum { background: var(--plum); }
+    .mini-block.amber { background: var(--amber); }
+
+    .toast {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      background: #10232b;
+      color: white;
+      border-radius: 8px;
+      padding: 12px 14px;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: 0.22s ease;
+      z-index: 10;
+      max-width: min(360px, calc(100vw - 40px));
+      font-size: 13px;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 1180px) {
+      .app-shell { grid-template-columns: 1fr; }
+      .sidebar {
+        min-height: auto;
+        position: static;
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .nav {
+        grid-template-columns: repeat(6, minmax(96px, 1fr));
+        flex: 1 1 640px;
+      }
+      .advisor-card { display: none; }
+      .dashboard-grid, .hero-band, .two-col, .next-step-grid, .queue-grid { grid-template-columns: 1fr; }
+      .goal-strip { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 780px) {
+      .topbar { align-items: flex-start; flex-direction: column; padding: 16px; }
+      .screen { padding: 16px; }
+      .nav { grid-template-columns: 1fr 1fr; }
+      .calendar { grid-template-columns: 52px repeat(5, minmax(66px, 1fr)); }
+      .metric-grid { grid-template-columns: 1fr 1fr; }
+      .section-row { grid-template-columns: 1fr; }
+      .summary-band h2 { font-size: 23px; }
+      .goal-strip { grid-template-columns: 1fr; }
+      .requirement-table { display: block; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">SR</div>
+        <div>
+          <strong>Smart Registration Planner</strong>
+          <span>Advisor console prototype</span>
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="Prototype screens">
+        <button class="active" data-screen="queue"><i>Q</i>Student Queue</button>
+        <button data-screen="builder"><i>W</i>Weekly Builder</button>
+        <button data-screen="assistant"><i>P</i>Plan Review</button>
+        <button data-screen="checks"><i>C</i>Checks</button>
+        <button data-screen="alternatives"><i>S</i>Sections</button>
+        <button data-screen="backups"><i>B</i>Backups</button>
+        <button data-screen="nextSteps"><i>N</i>Next Steps</button>
+      </nav>
+
+      <div class="advisor-card">
+        <b>Advisor task</b>
+        <p>Start from the student queue, pick a student at risk, then preview the schedule plan and next steps.</p>
+      </div>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <div class="student-meta">
+          <h1 id="studentName">Timothy Le</h1>
+          <span class="pill" id="studentMajor">CSE major</span>
+          <span class="pill" id="studentStanding">Sophomore standing</span>
+          <span class="pill danger" id="topCreditPill">10 / 12 credits</span>
+          <span class="pill" id="studentRegistration">Registration tomorrow</span>
+        </div>
+        <button class="primary" id="generateBackupsTop">Generate 3 backup schedules</button>
+      </header>
+
+      <section class="screen active" id="queue">
+        <div class="summary-band">
+          <h2>Students needing registration help</h2>
+          <p>Select a student to preview their schedule, risks, backup plans, and advisor next steps.</p>
+        </div>
+        <div class="queue-grid" id="studentQueue"></div>
+      </section>
+
+      <section class="screen" id="builder">
+        <div class="goal-strip">
+          <article class="goal-card">
+            <b>Student Goal</b>
+            <p id="studentGoal">Student needs 15 credits, must take 2 major requirements, avoid morning classes, and stay full-time.</p>
+          </article>
+          <article class="goal-card">
+            <b>Current Credits</b>
+            <span id="goalCredits">10 / 12 minimum</span>
+          </article>
+          <article class="goal-card">
+            <b>Main Risk</b>
+            <span id="goalRisk">Drops below full-time if no course is added</span>
+          </article>
+          <article class="goal-card">
+            <b>Advisor Priority</b>
+            <span id="advisorPriority">Open seats, degree progress, compliance safe</span>
+          </article>
+        </div>
+        <div class="dashboard-grid">
+          <section class="panel">
+            <div class="panel-header">
+              <h2>Course Options</h2>
+              <span class="pill">Drag to week</span>
+            </div>
+            <div class="panel-body">
+              <div class="filters">
+                <select aria-label="Major filter" id="majorFilter">
+                  <option>CSE</option>
+                  <option>INFO</option>
+                  <option>General education</option>
+                </select>
+                <select aria-label="Availability filter" id="availabilityFilter">
+                  <option>Open seats</option>
+                  <option>All sections</option>
+                  <option>Waitlist OK</option>
+                </select>
+              </div>
+              <div class="course-list" id="courseList"></div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-header">
+              <h2>Smart Schedule Builder</h2>
+              <span class="pill danger" id="creditCount">10 credits planned</span>
+            </div>
+            <div class="panel-body">
+              <div class="calendar-tools">
+                <div class="tool-group">
+                  <button class="tool-button" id="autoFit"><i>F</i>Find course to reach full-time</button>
+                  <button class="tool-button" id="clearAdds"><i>X</i>Clear added</button>
+                </div>
+                <span class="pill danger" id="fitLabel">Main risk: below full-time</span>
+              </div>
+              <div class="calendar" id="calendar" aria-label="Weekly calendar">
+                <div class="cal-head">Time</div>
+                <div class="cal-head">Mon</div>
+                <div class="cal-head">Tue</div>
+                <div class="cal-head">Wed</div>
+                <div class="cal-head">Thu</div>
+                <div class="cal-head">Fri</div>
+              </div>
+            </div>
+          </section>
+
+          <aside class="panel">
+            <div class="panel-header">
+              <h2>Advisor Actions</h2>
+              <span class="pill">Next steps</span>
+            </div>
+            <div class="panel-body ai-thread">
+              <div class="message ai" id="assistantMini">Add one degree-counting course to reach full-time. CSE 373 is strongest but has limited seats; INFO 380 is the safest open-seat backup.</div>
+              <div class="action-grid">
+                <button class="primary advisor-action">Send schedule to student</button>
+                <button class="advisor-action">Request override</button>
+                <button class="advisor-action">Message student</button>
+                <button class="advisor-action">Save advising notes</button>
+                <button class="advisor-action">Flag for follow-up</button>
+              </div>
+              <div class="message user" id="actionLog">No advisor action recorded yet.</div>
+              <button id="viewNextSteps">View tracked next steps</button>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="screen" id="assistant">
+        <div class="hero-band">
+          <div class="summary-band">
+            <h2 id="planReviewTitle">Recommended Plan A keeps Timothy full-time and completes a CSE major requirement.</h2>
+            <p id="planReviewCopy">This view highlights the decisions an advisor needs first: requirement value, registration status, credits, and risks that need explanation.</p>
+            <div class="tool-group">
+              <button class="primary" id="applyAi">Apply Plan A</button>
+              <button id="jumpAlternatives">Review alternatives</button>
+            </div>
+          </div>
+          <section class="panel">
+            <div class="panel-header"><h2>Decision Summary</h2><span class="pill success">Advisor-ready</span></div>
+            <div class="panel-body">
+              <ul class="score-list" id="decisionSummary"></ul>
+            </div>
+          </section>
+        </div>
+
+        <section class="panel">
+          <div class="panel-header"><h2>Recommended Plan A</h2><span class="pill">3 courses shown</span></div>
+          <div class="panel-body">
+            <table class="requirement-table">
+              <thead>
+                <tr><th>Course</th><th>Requirement</th><th>Status</th><th>Advisor note</th></tr>
+              </thead>
+              <tbody id="planTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <section class="screen" id="checks">
+        <div class="two-col">
+          <section class="panel">
+            <div class="panel-header">
+              <h2>System Warnings</h2>
+              <button id="runChecks">Run checks</button>
+            </div>
+            <div class="panel-body">
+              <ul class="status-list" id="checkList">
+                <li><span class="dot red"></span><span>Drops below full-time without one more course</span><b>Risk</b></li>
+                <li><span class="dot amber"></span><span>CSE 373 has limited seats remaining</span><b>Watch</b></li>
+                <li><span class="dot"></span><span>No time conflicts found</span><b>Clear</b></li>
+                <li><span class="dot"></span><span>Prerequisite verified for CSE 373</span><b>Clear</b></li>
+                <li><span class="dot amber"></span><span>May affect financial aid if registration stays under 12 credits</span><b>Warn</b></li>
+                <li><span class="dot amber"></span><span>Visa compliance risk if international status applies</span><b>Check</b></li>
+              </ul>
+            </div>
+          </section>
+          <section class="panel">
+            <div class="panel-header"><h2>Advisor Resolution</h2><span class="pill">Actionable</span></div>
+            <div class="panel-body ai-thread">
+              <div class="message ai" id="resolutionMessage">Add INFO 380 or ENGL 282 immediately if CSE 373 fills. Both count toward progress and move Timothy above the 12-credit minimum.</div>
+              <button class="primary" id="fixIssues">Resolve with open-seat backup</button>
+              <p class="tiny-note">The prototype shows the explanation an advisor can act on before registration starts.</p>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="screen" id="alternatives">
+        <div class="two-col">
+          <section class="panel">
+            <div class="panel-header">
+              <h2>Alternative Sections</h2>
+              <span class="pill">Sorted by requirement value</span>
+            </div>
+            <div class="panel-body section-list" id="sectionList"></div>
+          </section>
+          <section class="panel">
+            <div class="panel-header"><h2>Registration Picture</h2><span class="pill success">Clear path</span></div>
+            <div class="panel-body">
+              <div class="map" aria-label="Campus commute map">
+                <div class="building b1">Gates Hall</div>
+                <div class="building b2">Smith Hall</div>
+                <div class="building b3">Arts Hall</div>
+                <div class="route"></div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="screen" id="backups">
+        <div class="panel">
+          <div class="panel-header">
+            <h2>Backup Schedule Scenarios</h2>
+            <button class="primary" id="generateBackups">Generate 3 backup schedules</button>
+          </div>
+          <div class="panel-body backup-grid" id="backupGrid">
+            <article class="backup-card selected">
+              <div class="backup-top"><div><strong>Plan A: Best fit</strong><p class="tiny-note">CSE 373 completes the major requirement and moves Timothy to 13 credits.</p></div><span class="pill success">Best fit</span></div>
+              <div class="mini-week">
+                <div class="mini-day"><span class="mini-block"></span><span class="mini-block blue"></span></div>
+                <div class="mini-day"><span class="mini-block plum"></span></div>
+                <div class="mini-day"><span class="mini-block"></span><span class="mini-block blue"></span></div>
+                <div class="mini-day"><span class="mini-block plum"></span></div>
+                <div class="mini-day"><span class="mini-block amber"></span></div>
+              </div>
+              <button class="select-backup">Use Plan A</button>
+            </article>
+            <article class="backup-card">
+              <div class="backup-top"><div><strong>Plan B: If CSE 373 fills</strong><p class="tiny-note">Uses INFO 380 to preserve major progress with open seats.</p></div><span class="pill">Backup</span></div>
+              <div class="mini-week">
+                <div class="mini-day"><span class="mini-block blue"></span></div>
+                <div class="mini-day"><span class="mini-block"></span><span class="mini-block plum"></span></div>
+                <div class="mini-day"><span class="mini-block blue"></span></div>
+                <div class="mini-day"><span class="mini-block"></span><span class="mini-block plum"></span></div>
+                <div class="mini-day"></div>
+              </div>
+              <button class="select-backup">Use Plan B</button>
+            </article>
+            <article class="backup-card">
+              <div class="backup-top"><div><strong>Plan C: Open seats only</strong><p class="tiny-note">Safer registration path using only sections with strong seat availability.</p></div><span class="pill">Safest</span></div>
+              <div class="mini-week">
+                <div class="mini-day"><span class="mini-block"></span></div>
+                <div class="mini-day"><span class="mini-block blue"></span></div>
+                <div class="mini-day"><span class="mini-block"></span></div>
+                <div class="mini-day"><span class="mini-block blue"></span></div>
+                <div class="mini-day"><span class="mini-block plum"></span><span class="mini-block amber"></span></div>
+              </div>
+              <button class="select-backup">Use Plan C</button>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen" id="nextSteps">
+        <div class="goal-strip">
+          <article class="goal-card">
+            <b>Tracked Actions</b>
+            <span id="stepCount">0 next steps</span>
+          </article>
+          <article class="goal-card">
+            <b>Open Items</b>
+            <span id="openStepCount">0 open</span>
+          </article>
+          <article class="goal-card">
+            <b>Current Plan</b>
+            <span id="nextStepPlan">No plan selected</span>
+          </article>
+          <article class="goal-card">
+            <b>Latest Action</b>
+            <span id="latestStep">None yet</span>
+          </article>
+        </div>
+
+        <div class="next-step-grid">
+          <section class="panel">
+            <div class="panel-header">
+              <h2>Next Steps Tracker</h2>
+              <button id="clearCompletedSteps">Clear completed</button>
+            </div>
+            <div class="panel-body step-list" id="nextStepList"></div>
+          </section>
+
+          <aside class="panel">
+            <div class="panel-header"><h2>Quick Add</h2><span class="pill">Advisor note</span></div>
+            <div class="panel-body ai-thread">
+              <select id="quickStepType" aria-label="Next step type">
+                <option>Message student</option>
+                <option>Request override</option>
+                <option>Save advising notes</option>
+                <option>Flag for follow-up</option>
+                <option>Send schedule to student</option>
+              </select>
+              <textarea id="quickStepNote" aria-label="Next step note">Confirm the student understands Plan A and backup options before registration opens.</textarea>
+              <button class="primary" id="addQuickStep">Add next step</button>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const screens = document.querySelectorAll(".screen");
+    const navButtons = document.querySelectorAll(".nav button");
+    const calendar = document.querySelector("#calendar");
+    const toast = document.querySelector("#toast");
+    const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+    const times = ["8 AM", "9 AM", "10 AM", "11 AM", "12 PM", "1 PM", "2 PM", "3 PM", "4 PM"];
+    let draggedCourseCode = "";
+
+    const students = [
+      {
+        id: "catherine",
+        name: "Catherine Park",
+        major: "CSE major",
+        standing: "Junior standing",
+        registration: "Registration today",
+        baseCredits: 9,
+        minimumCredits: 12,
+        targetCredits: 15,
+        goal: "Needs full-time enrollment, one CSE major requirement, and backup sections with open seats.",
+        priority: "Full-time status, major progress, backup plans",
+        risk: "Needs one more enrolled course to stay full-time",
+        queueStatus: "Full-time risk",
+        queueTone: "bad"
+      },
+      {
+        id: "aahil",
+        name: "Aahil Irfan",
+        major: "CSE major",
+        standing: "Sophomore standing",
+        registration: "Registration tomorrow",
+        baseCredits: 10,
+        minimumCredits: 12,
+        targetCredits: 15,
+        goal: "Needs 15 credits, must take 2 major requirements, avoid morning classes, and stay full-time.",
+        priority: "Open seats, degree progress, compliance safe",
+        risk: "Needs one more enrolled course to stay full-time",
+        queueStatus: "Full-time risk",
+        queueTone: "bad"
+      },
+      {
+        id: "louis",
+        name: "Louis Lu",
+        major: "Data Science major",
+        standing: "Sophomore standing",
+        registration: "Window opens today",
+        baseCredits: 12,
+        minimumCredits: 12,
+        targetCredits: 15,
+        goal: "Needs a major elective, wants low commute, and has a limited-seat first-choice section.",
+        priority: "Seat availability, backup sections, low commute",
+        risk: "Preferred section has limited seats",
+        queueStatus: "Seat risk",
+        queueTone: "warn"
+      },
+      {
+        id: "timothy",
+        name: "Timothy Le",
+        major: "CSE major",
+        standing: "Sophomore standing",
+        registration: "Registration in 2 days",
+        baseCredits: 13,
+        minimumCredits: 12,
+        targetCredits: 15,
+        goal: "Needs one writing course that counts toward degree progress without creating a time conflict.",
+        priority: "Degree applicability, time conflict check, advising note",
+        risk: "One selected course may not count toward progress",
+        queueStatus: "Degree progress",
+        queueTone: "warn"
+      }
+    ];
+
+    const baseEvents = [
+      { day: "Mon", time: "11 AM", code: "MATH 208", title: "Discrete Math", kind: "stats", room: "Science Hall" },
+      { day: "Wed", time: "11 AM", code: "MATH 208", title: "Discrete Math", kind: "stats", room: "Science Hall" },
+      { day: "Tue", time: "2 PM", code: "CSE 214", title: "Systems Lab", kind: "finance", room: "Gates Hall" },
+      { day: "Thu", time: "2 PM", code: "CSE 214", title: "Systems Lab", kind: "finance", room: "Gates Hall" }
+    ];
+
+    const courses = [
+      {
+        code: "CSE 373",
+        title: "Data Structures",
+        category: "CSE",
+        credits: 3,
+        seats: 5,
+        availability: "limited",
+        requirement: "Major requirement",
+        status: "Prerequisite verified",
+        note: "Limited seats, recommend backup section.",
+        kind: "finance",
+        room: "Gates Hall",
+        meetings: [{ day: "Tue", time: "1 PM" }, { day: "Thu", time: "1 PM" }],
+        tags: [{ text: "Major requirement", tone: "good" }, { text: "Limited seats", tone: "warn" }]
+      },
+      {
+        code: "INFO 380",
+        title: "Information Systems",
+        category: "INFO",
+        credits: 3,
+        seats: 14,
+        availability: "open",
+        requirement: "Major elective",
+        status: "Open seats",
+        note: "Strong backup if CSE 373 fills.",
+        kind: "stats",
+        room: "Smith Hall",
+        meetings: [{ day: "Mon", time: "2 PM" }, { day: "Wed", time: "2 PM" }],
+        tags: [{ text: "Major elective", tone: "blue" }, { text: "Open seats", tone: "good" }]
+      },
+      {
+        code: "ENGL 282",
+        title: "Technical Writing",
+        category: "General education",
+        credits: 3,
+        seats: 21,
+        availability: "open",
+        requirement: "Writing credit",
+        status: "Open seats",
+        note: "Helps degree progress and full-time enrollment.",
+        kind: "",
+        room: "Arts Hall",
+        meetings: [{ day: "Fri", time: "10 AM" }],
+        tags: [{ text: "Writing credit", tone: "blue" }, { text: "Full-time progress", tone: "good" }]
+      },
+      {
+        code: "CSE 390",
+        title: "Research Seminar",
+        category: "CSE",
+        credits: 1,
+        seats: 0,
+        availability: "waitlist",
+        requirement: "Does not count toward current degree progress",
+        status: "Waitlist only",
+        note: "Morning class, waitlist only, and does not solve the full-time risk.",
+        kind: "warn",
+        room: "Gates Hall",
+        meetings: [{ day: "Mon", time: "9 AM" }, { day: "Wed", time: "9 AM" }],
+        tags: [{ text: "Waitlist only", tone: "bad" }, { text: "Does not count", tone: "bad" }]
+      },
+      {
+        code: "CSE 421",
+        title: "Database Systems",
+        category: "CSE",
+        credits: 3,
+        seats: 9,
+        availability: "open",
+        requirement: "Major elective",
+        status: "Open seats",
+        note: "Conflicts with the student's current CSE 214 lab block.",
+        kind: "warn",
+        room: "Gates Hall",
+        meetings: [{ day: "Tue", time: "2 PM" }, { day: "Thu", time: "2 PM" }],
+        tags: [{ text: "Major elective", tone: "blue" }, { text: "Time conflict", tone: "bad" }]
+      }
+    ];
+
+    const plans = {
+      A: { name: "Plan A: Best fit", codes: ["CSE 373"], toast: "Plan A applied: CSE 373 added, full-time reached, major requirement covered." },
+      B: { name: "Plan B: If CSE 373 fills", codes: ["INFO 380"], toast: "Plan B applied: INFO 380 added as the open-seat major elective backup." },
+      C: { name: "Plan C: Open seats only", codes: ["INFO 380", "ENGL 282"], toast: "Plan C applied: only open-seat sections used and the student reaches the safest credit load." }
+    };
+
+    const actionTemplates = {
+      "Send schedule to student": {
+        owner: "Advisor",
+        due: "Today",
+        note: "Send the selected plan and backup schedule options to {student}."
+      },
+      "Request override": {
+        owner: "Department approver",
+        due: "Before registration opens",
+        note: "Request an override if the preferred CSE requirement section blocks registration."
+      },
+      "Message student": {
+        owner: "Advisor",
+        due: "Today",
+        note: "Ask {student} to confirm plan preference and whether morning classes are still a hard constraint."
+      },
+      "Save advising notes": {
+        owner: "Advisor",
+        due: "Now",
+        note: "Document the recommendation, risks, and backup schedule in the advising record."
+      },
+      "Flag for follow-up": {
+        owner: "Advisor",
+        due: "Registration morning",
+        note: "Check whether {student} successfully registered or needs backup Plan B/C."
+      }
+    };
+
+    const state = {
+      currentStudentId: "catherine",
+      studentRecords: Object.fromEntries(students.map(student => [student.id, {
+        addedCodes: [],
+        selectedPlan: "",
+        lastAction: "No advisor action recorded yet.",
+        nextSteps: []
+      }]))
+    };
+
+    function currentStudent() {
+      return students.find(student => student.id === state.currentStudentId) || students[0];
+    }
+
+    function activeRecord() {
+      return state.studentRecords[state.currentStudentId];
+    }
+
+    function courseByCode(code) {
+      return courses.find(course => course.code === code);
+    }
+
+    function visibleAddedCourses() {
+      return activeRecord().addedCodes.map(courseByCode).filter(Boolean);
+    }
+
+    function totalCredits() {
+      return currentStudent().baseCredits + visibleAddedCourses()
+        .filter(course => course.availability !== "waitlist")
+        .reduce((sum, course) => sum + course.credits, 0);
+    }
+
+    function showToast(text) {
+      toast.textContent = text;
+      toast.classList.add("show");
+      window.clearTimeout(showToast.timer);
+      showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 2600);
+    }
+
+    function switchScreen(id) {
+      screens.forEach(screen => screen.classList.toggle("active", screen.id === id));
+      navButtons.forEach(button => button.classList.toggle("active", button.dataset.screen === id));
+      renderStudentProfile();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function buildCalendarGrid() {
+      times.forEach(time => {
+        const timeCell = document.createElement("div");
+        timeCell.className = "time-cell";
+        timeCell.textContent = time;
+        calendar.append(timeCell);
+
+        days.forEach(day => {
+          const cell = document.createElement("div");
+          cell.className = "day-cell";
+          cell.dataset.day = day;
+          cell.dataset.time = time;
+          cell.addEventListener("dragover", event => {
+            event.preventDefault();
+            cell.classList.add("drop-target");
+          });
+          cell.addEventListener("dragleave", () => cell.classList.remove("drop-target"));
+          cell.addEventListener("drop", event => {
+            event.preventDefault();
+            cell.classList.remove("drop-target");
+            if (draggedCourseCode) addCourse(draggedCourseCode);
+          });
+          calendar.append(cell);
+        });
+      });
+    }
+
+    function renderEvent(eventData, added) {
+      const cell = calendar.querySelector(`[data-day="${eventData.day}"][data-time="${eventData.time}"]`);
+      if (!cell) return;
+      const event = document.createElement("div");
+      event.className = `event ${eventData.kind || ""}`;
+      event.dataset.added = added ? "true" : "false";
+      event.innerHTML = `<b>${eventData.code}</b><span>${eventData.title}</span><span>${eventData.room}</span>`;
+      cell.append(event);
+    }
+
+    function renderCalendarEvents() {
+      document.querySelectorAll(".day-cell").forEach(cell => { cell.innerHTML = ""; });
+      baseEvents.forEach(event => renderEvent(event, false));
+      visibleAddedCourses().forEach(course => {
+        course.meetings.forEach(meeting => renderEvent({ ...meeting, code: course.code, title: course.title, kind: course.kind, room: course.room }, true));
+      });
+    }
+
+    function renderCourses() {
+      const major = document.querySelector("#majorFilter").value;
+      const availability = document.querySelector("#availabilityFilter").value;
+      const list = document.querySelector("#courseList");
+      list.innerHTML = "";
+
+      courses
+        .filter(course => major === course.category)
+        .filter(course => {
+          if (availability === "All sections") return true;
+          if (availability === "Waitlist OK") return course.availability === "waitlist" || course.seats > 0;
+          return course.availability !== "waitlist" && course.seats > 0;
+        })
+        .forEach(course => {
+          const card = document.createElement("article");
+          const seatClass = course.availability === "waitlist" ? "seat-closed" : course.seats < 8 ? "seat-low" : "seat-open";
+          const seatText = course.availability === "waitlist" ? "waitlist" : `${course.seats} seats`;
+          const added = activeRecord().addedCodes.includes(course.code);
+          card.className = "course-card";
+          card.draggable = true;
+          card.dataset.code = course.code;
+          card.innerHTML = `
+            <strong>${course.code} <span class="seat-tag ${seatClass}">${seatText}</span></strong>
+            <p>${course.meetings.map(m => `${m.day} ${m.time}`).join(", ")}, ${course.room}. ${course.status}.</p>
+            <div class="requirement-tags">${course.tags.map(tag => `<span class="status-chip ${tag.tone}">${tag.text}</span>`).join("")}</div>
+            <div class="course-actions">
+              <button class="${added ? "primary" : ""}" data-add-course="${course.code}">${added ? "Added" : "Add to schedule"}</button>
+            </div>`;
+          card.addEventListener("dragstart", () => {
+            draggedCourseCode = course.code;
+            card.classList.add("dragging");
+          });
+          card.addEventListener("dragend", () => {
+            draggedCourseCode = "";
+            card.classList.remove("dragging");
+          });
+          list.append(card);
+        });
+
+      if (!list.children.length) {
+        list.innerHTML = `<p class="tiny-note">No courses match those filters. Try All sections or another requirement area.</p>`;
+      }
+    }
+
+    function detectConflicts(course) {
+      const scheduled = [
+        ...baseEvents,
+        ...visibleAddedCourses().flatMap(existing => existing.meetings.map(meeting => ({ ...meeting, code: existing.code })))
+      ];
+      return course.meetings.filter(meeting => scheduled.some(event => event.day === meeting.day && event.time === meeting.time && event.code !== course.code));
+    }
+
+    function addCourse(code, silent = false) {
+      const course = courseByCode(code);
+      if (!course) return false;
+      if (activeRecord().addedCodes.includes(code)) {
+        if (!silent) showToast(`${code} is already on the schedule.`);
+        return true;
+      }
+
+      const conflicts = detectConflicts(course);
+      if (conflicts.length) {
+        showToast(`${code} has a time conflict at ${conflicts.map(item => `${item.day} ${item.time}`).join(", ")}.`);
+        return false;
+      }
+
+      activeRecord().addedCodes.push(code);
+      if (!silent) {
+        const risk = course.availability === "waitlist" ? " It is waitlist only, so credits are not counted yet." : "";
+        showToast(`${code} added. ${course.requirement}.${risk}`);
+      }
+      syncUI();
+      return true;
+    }
+
+    function clearAddedCourses() {
+      activeRecord().addedCodes = [];
+      activeRecord().selectedPlan = "";
+      syncUI();
+      showToast(`Added courses cleared. ${currentStudent().name} may be below full-time again.`);
+    }
+
+    function applyPlan(planKey) {
+      const plan = plans[planKey];
+      if (!plan) return;
+      activeRecord().addedCodes = [];
+      activeRecord().selectedPlan = planKey;
+      plan.codes.forEach(code => addCourse(code, true));
+      syncUI();
+      showToast(plan.toast);
+    }
+
+    function warnings() {
+      const credits = totalCredits();
+      const added = visibleAddedCourses();
+      const student = currentStudent();
+      const warningList = [];
+      if (credits < student.minimumCredits) warningList.push(["red", "Drops below full-time without one more enrolled course", "Risk"]);
+      else warningList.push(["", "Student reaches full-time enrollment", "Clear"]);
+      if (credits < student.minimumCredits) warningList.push(["amber", `May affect financial aid if registration stays under ${student.minimumCredits} credits`, "Warn"]);
+      else warningList.push(["", "Financial aid enrollment risk reduced", "Clear"]);
+      if (credits < student.minimumCredits) warningList.push(["amber", "Visa compliance risk if international status applies", "Check"]);
+      else warningList.push(["", "Visa compliance risk reduced if international status applies", "Clear"]);
+      if (added.some(course => course.code === "CSE 373")) warningList.push(["amber", "CSE 373 has limited seats remaining", "Watch"]);
+      if (added.some(course => course.availability === "waitlist")) warningList.push(["red", "Waitlist-only course does not count toward confirmed enrollment", "Issue"]);
+      if (added.some(course => course.code === "CSE 390")) warningList.push(["amber", "CSE 390 is a morning class and does not satisfy the current requirement", "Review"]);
+      warningList.push(["", "No time conflicts found", "Clear"]);
+      warningList.push(["", "Prerequisite verified for CSE 373", "Clear"]);
+      return warningList;
+    }
+
+    function renderWarnings() {
+      document.querySelector("#checkList").innerHTML = warnings().map(([tone, text, label]) =>
+        `<li><span class="dot ${tone}"></span><span>${text}</span><b>${label}</b></li>`
+      ).join("");
+    }
+
+    function renderDecisionSummary() {
+      const credits = totalCredits();
+      const added = visibleAddedCourses();
+      const student = currentStudent();
+      const hasMajor = added.some(course => course.requirement.includes("Major requirement"));
+      const cse373 = courseByCode("CSE 373");
+      document.querySelector("#decisionSummary").innerHTML = `
+        <li class="score-row"><span class="dot ${credits >= student.minimumCredits ? "" : "red"}"></span><span>Full-time enrollment</span><b>${credits >= student.minimumCredits ? "Reached" : "At risk"}</b></li>
+        <li class="score-row"><span class="dot ${hasMajor ? "" : "amber"}"></span><span>Major requirement included</span><b>${hasMajor ? "Yes" : "No"}</b></li>
+        <li class="score-row"><span class="dot amber"></span><span>CSE 373 seats remaining</span><b>${cse373.seats}</b></li>
+        <li class="score-row"><span class="dot"></span><span>Time conflicts found</span><b>0</b></li>`;
+    }
+
+    function renderPlanTable() {
+      const rows = (visibleAddedCourses().length ? visibleAddedCourses() : [courseByCode("CSE 373"), courseByCode("INFO 380"), courseByCode("ENGL 282")]);
+      document.querySelector("#planTableBody").innerHTML = rows.map(course => `
+        <tr>
+          <td><strong>${course.code}</strong><br>${course.title}</td>
+          <td>${course.requirement}</td>
+          <td><span class="status-chip ${course.availability === "waitlist" ? "bad" : course.seats < 8 ? "warn" : "good"}">${course.status}</span></td>
+          <td>${course.note}</td>
+        </tr>`).join("");
+    }
+
+    function renderSections() {
+      document.querySelector("#sectionList").innerHTML = courses.map(course => {
+        const seatClass = course.availability === "waitlist" ? "seat-closed" : course.seats < 8 ? "seat-low" : "seat-open";
+        const seatText = course.availability === "waitlist" ? "waitlist" : `${course.seats} seats`;
+        const added = activeRecord().addedCodes.includes(course.code);
+        return `
+          <article class="section-row">
+            <div><strong>${course.code}</strong><br><span>${course.meetings.map(m => `${m.day} ${m.time}`).join(", ")}, ${course.room}</span></div>
+            <span class="seat-tag ${seatClass}">${seatText}</span>
+            <span>${course.requirement}</span>
+            <span>${course.status}</span>
+            <button class="${added ? "primary" : ""} add-section" data-add-course="${course.code}">${added ? "Added" : "Add"}</button>
+          </article>`;
+      }).join("");
+    }
+
+    function renderBackupCards() {
+      document.querySelectorAll(".backup-card").forEach((card, index) => {
+        const key = ["A", "B", "C"][index];
+        card.classList.toggle("selected", activeRecord().selectedPlan === key);
+      });
+    }
+
+    function createNextStep(title, customNote = "") {
+      const record = activeRecord();
+      const student = currentStudent();
+      const template = actionTemplates[title] || { owner: "Advisor", due: "Today", note: customNote || `Follow up with ${student.name} before registration.` };
+      const templateNote = template.note.replaceAll("{student}", student.name);
+      const existing = record.nextSteps.find(step => step.title === title && !step.completed);
+      if (existing) {
+        existing.note = customNote || templateNote;
+        existing.plan = record.selectedPlan ? plans[record.selectedPlan].name : "Current working schedule";
+        existing.updated = new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+        return existing;
+      }
+      const step = {
+        id: `step-${Date.now()}-${Math.round(Math.random() * 1000)}`,
+        title,
+        note: customNote || templateNote,
+        owner: template.owner,
+        due: template.due,
+        plan: record.selectedPlan ? plans[record.selectedPlan].name : "Current working schedule",
+        completed: false,
+        updated: new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
+      };
+      record.nextSteps.unshift(step);
+      return step;
+    }
+
+    function renderNextSteps() {
+      const list = document.querySelector("#nextStepList");
+      if (!list) return;
+      const record = activeRecord();
+      const student = currentStudent();
+      const openCount = record.nextSteps.filter(step => !step.completed).length;
+      document.querySelector("#stepCount").textContent = `${record.nextSteps.length} next step${record.nextSteps.length === 1 ? "" : "s"}`;
+      document.querySelector("#openStepCount").textContent = `${openCount} open`;
+      document.querySelector("#nextStepPlan").textContent = record.selectedPlan ? plans[record.selectedPlan].name : "No plan selected";
+      document.querySelector("#latestStep").textContent = record.nextSteps[0] ? record.nextSteps[0].title : "None yet";
+
+      if (!record.nextSteps.length) {
+        list.innerHTML = `<div class="empty-state">No next steps have been tracked yet. Use the Advisor Actions buttons or Quick Add to create follow-up items for ${student.name}.</div>`;
+        return;
+      }
+
+      list.innerHTML = record.nextSteps.map(step => `
+        <article class="step-card ${step.completed ? "completed" : ""}">
+          <div>
+            <h3>${step.title}</h3>
+            <p class="tiny-note">${step.note}</p>
+            <div class="step-meta">
+              <span class="status-chip ${step.completed ? "good" : "blue"}">${step.completed ? "Completed" : "Open"}</span>
+              <span class="status-chip">Owner: ${step.owner}</span>
+              <span class="status-chip warn">Due: ${step.due}</span>
+              <span class="status-chip">${step.plan}</span>
+              <span class="status-chip">Updated ${step.updated}</span>
+            </div>
+          </div>
+          <button data-toggle-step="${step.id}">${step.completed ? "Reopen" : "Mark done"}</button>
+        </article>`).join("");
+    }
+
+    function updateCreditLabels() {
+      const credits = totalCredits();
+      const student = currentStudent();
+      const safe = credits >= student.minimumCredits;
+      const label = `${credits} credits planned`;
+      const top = document.querySelector("#topCreditPill");
+      const credit = document.querySelector("#creditCount");
+      top.textContent = `${credits} / ${student.minimumCredits} credits`;
+      top.className = safe ? "pill success" : "pill danger";
+      credit.textContent = label;
+      credit.className = safe ? "pill success" : "pill danger";
+      document.querySelector("#goalCredits").textContent = `${credits} / ${student.minimumCredits} minimum, ${student.targetCredits} target`;
+      document.querySelector("#goalRisk").textContent = safe ? `Full-time risk reduced; build toward ${student.targetCredits}-credit target` : student.risk;
+      document.querySelector("#fitLabel").textContent = safe ? "Full-time enrollment reached" : "Main risk: below full-time";
+      document.querySelector("#fitLabel").className = safe ? "pill success" : "pill danger";
+    }
+
+    function updateAssistantText() {
+      const credits = totalCredits();
+      const record = activeRecord();
+      const student = currentStudent();
+      const added = visibleAddedCourses().map(course => course.code).join(", ");
+      document.querySelector("#assistantMini").textContent = credits >= student.minimumCredits
+        ? `Current schedule reaches full-time with ${added || "the selected plan"}. Review warnings, then send or save advising notes.`
+        : "Add one degree-counting course to reach full-time. CSE 373 is strongest but has limited seats; INFO 380 is the safest open-seat backup.";
+      document.querySelector("#actionLog").textContent = record.lastAction;
+    }
+
+    function renderStudentProfile() {
+      const student = currentStudent();
+      const queueActive = document.querySelector("#queue").classList.contains("active");
+      if (queueActive) {
+        const highRiskCount = students.filter(item => item.queueTone === "bad").length;
+        document.querySelector("#studentName").textContent = "Advisor Queue";
+        document.querySelector("#studentMajor").textContent = `${students.length} students`;
+        document.querySelector("#studentStanding").textContent = "Needs review";
+        document.querySelector("#studentRegistration").textContent = "Select a student";
+        document.querySelector("#topCreditPill").textContent = `${highRiskCount} high risk`;
+        document.querySelector("#topCreditPill").className = highRiskCount ? "pill danger" : "pill success";
+        return;
+      }
+      document.querySelector("#studentName").textContent = student.name;
+      document.querySelector("#studentMajor").textContent = student.major;
+      document.querySelector("#studentStanding").textContent = student.standing;
+      document.querySelector("#studentRegistration").textContent = student.registration;
+      document.querySelector("#studentGoal").textContent = student.goal;
+      document.querySelector("#advisorPriority").textContent = student.priority;
+      document.querySelector("#planReviewTitle").textContent = `Recommended Plan A helps ${student.name} address the main registration risk.`;
+      document.querySelector("#planReviewCopy").textContent = `This preview focuses on ${student.name}'s credits, requirement value, registration status, and next advisor action.`;
+      document.querySelector("#resolutionMessage").textContent = `Use the safest open-seat backup if ${student.name}'s first-choice course fills or creates a registration block.`;
+      document.querySelector("#quickStepNote").value = `Confirm ${student.name} understands Plan A and backup options before registration opens.`;
+    }
+
+    function renderStudentQueue() {
+      const queue = document.querySelector("#studentQueue");
+      if (!queue) return;
+      queue.innerHTML = students.map(student => {
+        const record = state.studentRecords[student.id];
+        const credits = student.baseCredits + record.addedCodes.map(courseByCode).filter(Boolean)
+          .filter(course => course.availability !== "waitlist")
+          .reduce((sum, course) => sum + course.credits, 0);
+        const openSteps = record.nextSteps.filter(step => !step.completed).length;
+        const selected = student.id === state.currentStudentId;
+        return `
+          <article class="student-card ${selected ? "selected" : ""}">
+            <div>
+              <h2>${student.name}</h2>
+              <p>${student.major} • ${student.standing}</p>
+            </div>
+            <div class="step-meta">
+              <span class="status-chip ${student.queueTone}">${student.queueStatus}</span>
+              <span class="status-chip ${credits >= student.minimumCredits ? "good" : "bad"}">${credits} / ${student.minimumCredits} credits</span>
+              <span class="status-chip">${student.registration}</span>
+              <span class="status-chip blue">${openSteps} open next steps</span>
+            </div>
+            <p>${student.risk}</p>
+            <button class="primary" data-select-student="${student.id}">Preview student</button>
+          </article>`;
+      }).join("");
+    }
+
+    function selectStudent(studentId) {
+      if (!state.studentRecords[studentId]) return;
+      state.currentStudentId = studentId;
+      syncUI();
+      switchScreen("builder");
+      showToast(`${currentStudent().name}'s schedule preview loaded.`);
+    }
+
+    function syncUI() {
+      updateCreditLabels();
+      renderStudentProfile();
+      renderStudentQueue();
+      renderCalendarEvents();
+      renderCourses();
+      renderWarnings();
+      renderDecisionSummary();
+      renderPlanTable();
+      renderSections();
+      renderBackupCards();
+      renderNextSteps();
+      updateAssistantText();
+    }
+
+    navButtons.forEach(button => {
+      button.addEventListener("click", () => switchScreen(button.dataset.screen));
+    });
+
+    document.querySelector("#majorFilter").addEventListener("change", renderCourses);
+    document.querySelector("#availabilityFilter").addEventListener("change", renderCourses);
+
+    document.addEventListener("click", event => {
+      const studentButton = event.target.closest("[data-select-student]");
+      if (studentButton) {
+        selectStudent(studentButton.dataset.selectStudent);
+        return;
+      }
+      const addButton = event.target.closest("[data-add-course]");
+      if (addButton) addCourse(addButton.dataset.addCourse);
+    });
+
+    document.querySelector("#autoFit").addEventListener("click", () => applyPlan("A"));
+    document.querySelector("#clearAdds").addEventListener("click", clearAddedCourses);
+    document.querySelector("#applyAi").addEventListener("click", () => {
+      applyPlan("A");
+      switchScreen("builder");
+    });
+    document.querySelector("#jumpAlternatives").addEventListener("click", () => switchScreen("alternatives"));
+    document.querySelector("#viewNextSteps").addEventListener("click", () => switchScreen("nextSteps"));
+    document.querySelector("#runChecks").addEventListener("click", () => {
+      renderWarnings();
+      showToast("Warnings refreshed from the current schedule.");
+    });
+    document.querySelector("#fixIssues").addEventListener("click", () => {
+      applyPlan("B");
+      showToast("Open-seat backup selected and risks reduced.");
+    });
+
+    document.querySelectorAll(".advisor-action").forEach(button => {
+      button.addEventListener("click", () => {
+        const step = createNextStep(button.textContent);
+        activeRecord().lastAction = `${step.title} tracked for ${currentStudent().name}.`;
+        syncUI();
+        showToast(activeRecord().lastAction);
+      });
+    });
+
+    document.querySelector("#addQuickStep").addEventListener("click", () => {
+      const title = document.querySelector("#quickStepType").value;
+      const note = document.querySelector("#quickStepNote").value.trim();
+      const step = createNextStep(title, note);
+      activeRecord().lastAction = `${step.title} added to next steps.`;
+      syncUI();
+      switchScreen("nextSteps");
+      showToast(activeRecord().lastAction);
+    });
+
+    document.querySelector("#clearCompletedSteps").addEventListener("click", () => {
+      const record = activeRecord();
+      const before = record.nextSteps.length;
+      record.nextSteps = record.nextSteps.filter(step => !step.completed);
+      record.lastAction = before === record.nextSteps.length ? "No completed next steps to clear." : "Completed next steps cleared.";
+      syncUI();
+      showToast(record.lastAction);
+    });
+
+    document.addEventListener("click", event => {
+      const toggle = event.target.closest("[data-toggle-step]");
+      if (!toggle) return;
+      const record = activeRecord();
+      const step = record.nextSteps.find(item => item.id === toggle.dataset.toggleStep);
+      if (!step) return;
+      step.completed = !step.completed;
+      step.updated = new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+      record.lastAction = `${step.title} ${step.completed ? "marked complete" : "reopened"}.`;
+      syncUI();
+      showToast(record.lastAction);
+    });
+
+    function pulseBackups() {
+      switchScreen("backups");
+      document.querySelectorAll(".backup-card").forEach((card, index) => {
+        card.style.transform = "translateY(0)";
+        setTimeout(() => {
+          card.style.transition = "transform 0.18s ease, box-shadow 0.18s ease";
+          card.style.transform = "translateY(-4px)";
+          setTimeout(() => { card.style.transform = "translateY(0)"; }, 180);
+        }, index * 120);
+      });
+      showToast("Three backup schedules generated. Select Plan A, B, or C to apply it.");
+    }
+
+    document.querySelector("#generateBackups").addEventListener("click", pulseBackups);
+    document.querySelector("#generateBackupsTop").addEventListener("click", pulseBackups);
+
+    document.querySelectorAll(".select-backup").forEach((button, index) => {
+      button.addEventListener("click", () => applyPlan(["A", "B", "C"][index]));
+    });
+
+    buildCalendarGrid();
+    syncUI();
+  </script>
+</body>
+</html>
