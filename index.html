@@ -36,6 +36,23 @@
 
     button, input, select, textarea { font: inherit; }
 
+    .back-button {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.14);
+      color: #e2e8f0;
+      min-height: 40px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .back-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
     button {
       border: 1px solid var(--line);
       background: var(--white);
@@ -214,10 +231,11 @@
     }
 
     .panel, .course-card, .backup-card, .section-row, .metric-card {
-      background: var(--white);
-      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid rgba(148, 163, 184, 0.18);
       border-radius: 24px;
-      box-shadow: var(--shadow);
+      box-shadow: 0 24px 50px rgba(15, 23, 42, 0.08);
+      color: var(--ink);
     }
 
     .panel { overflow: hidden; }
@@ -230,6 +248,11 @@
       padding: 14px;
       border-bottom: 1px solid var(--line);
       background: rgba(255,255,255,0.72);
+      transition: background 0.18s ease, border-color 0.18s ease;
+    }
+
+    .panel-header:hover {
+      background: rgba(255,255,255,0.9);
     }
 
     .panel-header h2, .section-title {
@@ -249,12 +272,12 @@
 
     select, input, textarea {
       width: 100%;
-      border: 1px solid var(--line);
+      border: 1px solid rgba(148, 163, 184, 0.28);
       border-radius: 16px;
-      background: var(--white);
+      background: rgba(15, 23, 42, 0.92);
       min-height: 38px;
       padding: 8px 10px;
-      color: var(--ink);
+      color: #f8fafc;
     }
 
     textarea {
@@ -270,6 +293,7 @@
       cursor: grab;
       user-select: none;
       background: linear-gradient(145deg, #ffffff, #f7f9fe);
+      position: relative;
     }
 
     .course-card.dragging { opacity: 0.55; }
@@ -280,6 +304,33 @@
       justify-content: space-between;
       gap: 10px;
       font-size: 13px;
+    }
+
+    .course-action-panel {
+      display: none;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 18px;
+      background: rgba(15, 23, 42, 0.08);
+      border: 1px solid rgba(31, 41, 55, 0.12);
+    }
+
+    .course-action-panel.visible {
+      display: grid;
+    }
+
+    .course-action-panel button {
+      width: 100%;
+      font-size: 12px;
+      padding: 9px 10px;
+      border-radius: 12px;
+    }
+
+    .course-action-panel button.secondary {
+      background: rgba(255, 255, 255, 0.92);
+      border-color: rgba(148, 163, 184, 0.24);
     }
 
     .course-card p, .tiny-note {
@@ -380,13 +431,13 @@
 
     .event {
       display: grid;
-      gap: 4px;
+      gap: 6px;
       border-left: 4px solid var(--teal);
       background: #edf8f5;
       border-radius: 14px;
-      padding: 8px;
+      padding: 10px;
       font-size: 12px;
-      cursor: grab;
+      cursor: default;
       box-shadow: 0 8px 18px rgba(24, 119, 117, 0.12);
     }
 
@@ -396,6 +447,32 @@
 
     .event b { font-size: 12px; }
     .event span { color: var(--muted); }
+
+    .event-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .event-actions button {
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 11px;
+      min-height: 30px;
+    }
+
+    .event-actions button.primary {
+      background: #1f7d70;
+      color: white;
+      border-color: #1f7d70;
+    }
+
+    .event-actions button.secondary {
+      background: rgba(255,255,255,0.92);
+      color: var(--ink);
+      border-color: rgba(148, 163, 184, 0.3);
+    }
 
     .ai-thread {
       display: grid;
@@ -410,7 +487,7 @@
     }
 
     .message.user { background: #eef2f7; }
-    .message.ai { background: #eafaf3; border: 1px solid rgba(32, 166, 122, 0.18); }
+    .message.advisor { background: #eafaf3; border: 1px solid rgba(32, 166, 122, 0.18); }
 
     .goal-strip {
       display: grid;
@@ -419,12 +496,65 @@
       margin-bottom: 18px;
     }
 
-    .goal-card {
-      background: var(--white);
-      border: 1px solid var(--line);
-      border-radius: 22px;
-      padding: 14px;
-      min-height: 86px;
+    .goal-banner {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(220px, 0.8fr);
+      gap: 14px;
+      margin-bottom: 20px;
+      align-items: stretch;
+    }
+
+    .goal-banner-copy {
+      background: rgba(16, 24, 40, 0.95);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      padding: 24px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .goal-banner-copy strong {
+      display: block;
+      font-size: 18px;
+      line-height: 1.25;
+      color: #f8fafc;
+    }
+
+    .goal-banner-copy p {
+      margin: 0;
+      color: #cbd5e1;
+      font-size: 13px;
+      max-width: 680px;
+    }
+
+    .goal-banner-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      padding: 16px;
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(15, 23, 42, 0.92);
+    }
+
+    .impact-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 12px;
+    }
+
+    .impact-tags .status-chip {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+    }
+
+    .message.advisor {
+      background: rgba(15, 30, 50, 0.92);
+      border-color: rgba(96, 165, 250, 0.18);
+      color: #f8fafc;
     }
 
     .goal-card b {
@@ -778,23 +908,36 @@
     }
 
     .mini-day {
-      background: #f2f6f6;
+      background: rgba(255, 255, 255, 0.05);
       border-radius: 16px;
-      padding: 5px;
+      padding: 6px;
       display: grid;
       align-content: start;
       gap: 5px;
+      min-height: 74px;
     }
 
     .mini-block {
-      min-height: 18px;
+      min-height: 24px;
       border-radius: 999px;
       background: #1b6b62;
+      color: #f8fafc;
+      font-size: 11px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 10px;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .mini-block.blue { background: var(--blue); }
     .mini-block.plum { background: var(--plum); }
     .mini-block.amber { background: var(--amber); }
+    .mini-block.green { background: var(--teal); }
 
     .toast {
       position: fixed;
@@ -851,80 +994,158 @@
 
     /* Dark dashboard visual system inspired by the provided reference UI. */
     body {
-      background: #0f1728;
-      color: #f8fafc;
+      min-height: 100vh;
+      background: linear-gradient(180deg, #08101f 0%, #0f1728 48%, #141f32 100%);
+      color: #e2e8f0;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 20% 10%, rgba(96, 165, 250, 0.14), transparent 20%),
+                  radial-gradient(circle at 80% 15%, rgba(34, 211, 153, 0.10), transparent 18%);
+      pointer-events: none;
     }
 
     .app-shell {
-      background: #0f1728;
-      grid-template-columns: 244px minmax(0, 1fr);
+      background: transparent;
+      grid-template-columns: 240px minmax(0, 1fr);
+      gap: 0;
+      padding: 28px;
     }
 
     .sidebar {
-      background: #0f1728;
-      border-right: 0;
-      box-shadow: none;
+      background: rgba(8, 16, 35, 0.96);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow: 0 32px 80px rgba(15, 23, 42, 0.35);
+      padding: 32px 24px;
     }
 
     .brand {
-      margin-bottom: 18px;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
     }
 
     .brand-mark {
       width: 52px;
       height: 52px;
       border-radius: 50%;
-      color: #0f1728;
-      box-shadow: 0 12px 34px rgba(0, 0, 0, 0.24);
+      border: none;
+      background: linear-gradient(135deg, #7c3aed, #22c55e);
+      color: #ffffff;
+      font-weight: 900;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 18px 40px rgba(124, 58, 237, 0.28);
     }
 
     .brand strong {
-      color: #ffffff;
-      font-size: 16px;
+      color: #f8fafc;
+      font-size: 18px;
+      line-height: 1.1;
     }
 
     .brand span,
-    .advisor-card p {
-      color: #aab3c2;
+    .advisor-card p,
+    .sidebar .tool-button,
+    .nav button {
+      color: #cbd5e1;
     }
 
     .nav {
-      gap: 14px;
+      display: grid;
+      gap: 10px;
+      margin-bottom: 24px;
     }
 
     .nav button {
-      color: #ffffff;
+      background: rgba(255, 255, 255, 0.03);
+      color: #e2e8f0;
+      border: 1px solid transparent;
       min-height: 48px;
       border-radius: 18px;
-      padding: 13px 16px;
-      font-size: 16px;
-      font-weight: 800;
+      padding: 14px 16px;
+      text-align: left;
+      font-size: 14px;
+      font-weight: 700;
+      transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+    }
+
+    .nav button:hover {
+      background: rgba(255, 255, 255, 0.06);
+      transform: translateY(-1px);
     }
 
     .nav button.active {
-      background: #303a4c;
-      border-color: rgba(255, 255, 255, 0.08);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+      background: rgba(99, 102, 241, 0.18);
+      border-color: rgba(99, 102, 241, 0.4);
+      color: #ffffff;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
     }
 
     .advisor-card {
-      background: #202a3a;
-      border-color: #354155;
-      color: #ffffff;
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.9));
+      border-color: rgba(255, 255, 255, 0.06);
+      color: #e2e8f0;
+      padding: 22px;
+      border-radius: 28px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
     }
 
     main {
-      background: #111a2b;
-      border-radius: 0;
-      min-height: 100vh;
+      background: transparent;
+      min-height: calc(100vh - 56px);
     }
 
     .topbar {
-      background: #111a2b;
-      border-bottom: 0;
-      color: #ffffff;
-      padding: 24px 32px 18px;
-      backdrop-filter: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 24px 32px;
+      margin-bottom: 18px;
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.96));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 28px;
+      box-shadow: 0 28px 60px rgba(15, 23, 42, 0.24);
+      backdrop-filter: blur(12px);
+    }
+
+    .topbar-left {
+      display: grid;
+      gap: 18px;
+      min-width: 0;
+    }
+
+    .topbar-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .topbar-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .topbar-meta .pill {
+      font-size: 12px;
+      padding: 6px 12px;
+    }
+
+    .student-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
     }
 
     h1,
@@ -932,41 +1153,46 @@
     .section-title,
     .student-card h2,
     .step-card h3 {
-      color: #ffffff;
+      color: #f8fafc;
     }
 
-    .topbar .pill {
-      background: #202a3a;
-      border-color: #334056;
-      color: #d6dce7;
+    .pill {
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(255,255,255,0.12);
+      color: #cbd5e1;
       box-shadow: none;
     }
 
-    .topbar .pill.danger {
-      color: #ffd0d5;
-      border-color: rgba(239, 107, 114, 0.42);
+    .pill.primary,
+    .pill.success {
+      background: rgba(52, 211, 153, 0.18);
+      border-color: rgba(52, 211, 153, 0.32);
+      color: #d9f99d;
     }
 
-    .topbar .pill.success {
-      color: #b7f4dd;
-      border-color: rgba(32, 166, 122, 0.42);
+    .pill.danger {
+      background: rgba(248, 113, 113, 0.16);
+      border-color: rgba(248, 113, 113, 0.32);
+      color: #fecdd3;
     }
 
     .screen {
-      padding: 26px 32px 42px;
+      padding: 12px 28px 32px;
     }
 
     .summary-band,
     .panel {
-      background: #202a3a;
-      border: 1px solid #2d394d;
-      color: #ffffff;
-      box-shadow: none;
+      background: rgba(15, 23, 42, 0.94);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #f8fafc;
+      box-shadow: 0 24px 50px rgba(15, 23, 42, 0.18);
     }
 
     .summary-band {
-      min-height: 200px;
+      min-height: 220px;
       padding: 34px;
+      border-radius: 28px;
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.96), rgba(10, 17, 30, 0.96));
     }
 
     .summary-band p,
@@ -978,13 +1204,13 @@
     .event span,
     .metric-card span,
     .course-card p {
-      color: #aeb7c7;
+      color: #94a3b8;
     }
 
     .panel-header {
       background: transparent;
-      border-bottom-color: #354155;
-      padding: 22px 24px;
+      border-bottom-color: rgba(255,255,255,0.08);
+      padding: 20px 24px;
     }
 
     .panel-body {
@@ -997,44 +1223,69 @@
     .backup-card,
     .metric-card,
     .course-card {
-      background: #202a3a;
-      border-color: #354155;
-      color: #ffffff;
+      background: rgba(15, 23, 42, 0.94);
+      border-color: rgba(255,255,255,0.08);
+      color: #f8fafc;
       box-shadow: none;
+      border-radius: 24px;
+    }
+
+    .course-card {
+      padding: 18px;
+      border: 1px solid rgba(255,255,255,0.06);
+      background: rgba(15, 23, 42, 0.95);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+
+    .course-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.18);
+      border-color: rgba(255,255,255,0.12);
+    }
+
+    .course-card strong {
+      color: #f8fafc;
+      font-size: 14px;
+    }
+
+    .course-card p,
+    .course-card .requirement-tags {
+      margin-top: 10px;
     }
 
     .student-card {
-      border: 0;
-      color: #172026;
-      box-shadow: none;
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #e2e8f0;
+      box-shadow: 0 22px 50px rgba(15, 23, 42, 0.24);
       min-height: 230px;
-      padding: 18px;
+      padding: 22px;
+      border-radius: 28px;
+      background: rgba(7, 11, 25, 0.95);
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
     }
 
-    .student-card:nth-child(1) { background: #ffe3c4; }
-    .student-card:nth-child(2) { background: #d7dce6; }
-    .student-card:nth-child(3) { background: #a8f0c9; }
-    .student-card:nth-child(4) { background: #c8e3ff; }
-
-    .student-card::before {
-      display: none;
+    .student-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 28px 64px rgba(15, 23, 42, 0.28);
     }
 
     .student-card h2 {
-      color: #171f2b;
+      color: #f8fafc;
     }
 
     .student-card p {
-      color: rgba(23, 31, 43, 0.72);
+      color: #94a3b8;
     }
 
     .student-card.selected {
-      border: 0;
-      box-shadow: 0 0 0 4px rgba(255,255,255,0.34);
+      border-color: rgba(99, 102, 241, 0.8);
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15), 0 22px 60px rgba(15, 23, 42, 0.3);
+      background: rgba(30, 41, 59, 0.98);
     }
 
     .student-card .status-chip {
-      background: rgba(255,255,255,0.55);
+      background: rgba(255,255,255,0.08);
+      color: #cbd5e1;
     }
 
     .calendar,
@@ -1042,141 +1293,150 @@
     select,
     input,
     textarea {
-      background: #151f31;
-      border-color: #354155;
-      color: #ffffff;
+      background: rgba(8, 15, 29, 0.96);
+      border-color: rgba(255,255,255,0.1);
+      color: #e2e8f0;
     }
 
     .cal-head,
     .time-cell,
     .requirement-table th {
-      background: #1a2537;
-      color: #d4dae5;
-      border-color: #354155;
+      background: rgba(15, 23, 42, 0.95);
+      color: #cbd5e1;
+      border-color: rgba(255,255,255,0.08);
     }
 
     .day-cell {
-      background: #151f31;
-      border-color: #2d394d;
+      background: rgba(15, 23, 42, 0.9);
+      border-color: rgba(255,255,255,0.06);
     }
 
     .day-cell.drop-target {
-      background: #203e42;
+      background: rgba(79, 70, 229, 0.14);
     }
 
     .event {
-      background: #24394a;
-      color: #ffffff;
-      box-shadow: none;
+      background: rgba(30, 41, 59, 0.95);
+      color: #f8fafc;
+      border-left: 4px solid rgba(16, 185, 129, 0.85);
+      box-shadow: 0 12px 24px rgba(15, 23, 42, 0.18);
     }
 
-    .event.finance { background: #243957; }
-    .event.stats { background: #302f55; }
-    .event.warn { background: #4a2b34; }
+    .event.finance { border-color: #22c55e; background: rgba(16, 185, 129, 0.12); }
+    .event.stats { border-color: #818cf8; background: rgba(129, 140, 248, 0.12); }
+    .event.warn { border-color: #f97316; background: rgba(249, 115, 22, 0.12); }
 
     .message.user {
-      background: #151f31;
-      color: #ffffff;
+      background: rgba(15, 23, 42, 0.92);
+      color: #f8fafc;
     }
 
-    .message.ai {
-      background: #193a34;
-      border-color: rgba(78, 220, 170, 0.2);
-      color: #ffffff;
+    .message.advisor {
+      background: rgba(15, 46, 68, 0.94);
+      border-color: rgba(52, 211, 153, 0.22);
+      color: #f8fafc;
     }
 
     .status-list li,
     .score-row,
     .empty-state {
-      background: #151f31;
-      border-color: #354155;
-      color: #ffffff;
+      background: rgba(15, 23, 42, 0.92);
+      border-color: rgba(255,255,255,0.08);
+      color: #f8fafc;
     }
 
     .map {
       background:
-        linear-gradient(90deg, transparent 49%, rgba(255,255,255,0.06) 50%, transparent 51%),
-        linear-gradient(0deg, transparent 49%, rgba(255,255,255,0.06) 50%, transparent 51%),
-        #151f31;
-      border-color: #354155;
+        linear-gradient(90deg, transparent 49%, rgba(255,255,255,0.05) 50%, transparent 51%),
+        linear-gradient(0deg, transparent 49%, rgba(255,255,255,0.05) 50%, transparent 51%),
+        rgba(15, 23, 42, 0.95);
+      border-color: rgba(255,255,255,0.08);
     }
 
     .building {
-      background: #202a3a;
-      border-color: #354155;
-      color: #ffffff;
+      background: rgba(15, 23, 42, 0.98);
+      border-color: rgba(255,255,255,0.08);
+      color: #f8fafc;
     }
 
     .mini-day {
-      background: #151f31;
+      background: rgba(8, 15, 29, 0.96);
     }
 
     .primary {
-      background: #247d70;
-      border-color: #247d70;
+      background: linear-gradient(135deg, #22c55e, #60a5fa);
+      border-color: transparent;
       color: #ffffff;
+      box-shadow: 0 16px 32px rgba(34, 197, 94, 0.18);
     }
 
     button {
-      background: #151f31;
-      border-color: #354155;
-      color: #ffffff;
+      background: rgba(15, 23, 42, 0.95);
+      border-color: rgba(255,255,255,0.1);
+      color: #f8fafc;
     }
 
     button:hover {
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.22);
+      background: rgba(255,255,255,0.06);
+      box-shadow: 0 12px 24px rgba(15, 23, 42, 0.22);
     }
 
     .pill,
     .status-chip {
       box-shadow: none;
+      border-color: rgba(255,255,255,0.08);
     }
 
     @media (max-width: 1180px) {
       .app-shell {
         grid-template-columns: 1fr;
+        padding: 18px;
       }
 
       .sidebar {
-        background: #0f1728;
-        min-height: auto;
         position: static;
+        min-height: auto;
         flex-direction: row;
-        align-items: center;
+        align-items: flex-start;
         flex-wrap: wrap;
-      }
-
-      .brand {
-        margin-bottom: 0;
-      }
-
-      .nav {
-        grid-template-columns: repeat(7, minmax(112px, 1fr));
-        flex: 1 1 760px;
-      }
-
-      .advisor-card {
-        display: none;
-      }
-    }
-
-    @media (max-width: 780px) {
-      .sidebar {
         padding: 18px 16px;
       }
 
       .brand {
         width: 100%;
+        margin-bottom: 16px;
       }
 
       .nav {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         width: 100%;
       }
 
+      .advisor-card {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 780px) {
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 18px;
+      }
+
+      .screen { padding: 16px 0 24px; }
+
       .nav button {
-        min-height: 42px;
-        font-size: 14px;
+        min-height: 44px;
+        font-size: 13px;
+      }
+
+      .dashboard-grid,
+      .hero-band,
+      .two-col,
+      .next-step-grid,
+      .queue-grid {
+        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -1210,14 +1470,24 @@
 
     <main>
       <header class="topbar">
-        <div class="student-meta">
-          <h1 id="studentName">Timothy Le</h1>
-          <span class="pill" id="studentMajor">CSE major</span>
-          <span class="pill" id="studentStanding">Sophomore standing</span>
-          <span class="pill danger" id="topCreditPill">10 / 12 credits</span>
-          <span class="pill" id="studentRegistration">Registration tomorrow</span>
+        <div class="topbar-left">
+          <div class="student-meta">
+            <h1 id="studentName">Timothy Le</h1>
+            <span class="pill" id="studentMajor">CSE major</span>
+            <span class="pill" id="studentStanding">Sophomore standing</span>
+            <span class="pill danger" id="topCreditPill">10 / 12 credits</span>
+            <span class="pill" id="studentRegistration">Registration tomorrow</span>
+          </div>
+          <div class="topbar-meta">
+            <span class="pill success">Advisor view</span>
+            <span class="pill blue">Queued students</span>
+            <span class="pill">Mobile friendly</span>
+          </div>
         </div>
-        <button class="primary" id="generateBackupsTop">Generate 3 backup schedules</button>
+        <div class="topbar-actions">
+          <button class="back-button" id="goBack" disabled>← Back</button>
+          <button class="primary" id="generateBackupsTop">Generate backup schedules</button>
+        </div>
       </header>
 
       <section class="screen active" id="queue">
@@ -1229,6 +1499,18 @@
       </section>
 
       <section class="screen" id="builder">
+        <div class="goal-banner">
+          <div class="goal-banner-copy">
+            <strong>Student needs 15 credits, must take 2 major requirements, avoid morning classes, and stay full-time.</strong>
+            <p>Start the schedule build from the student's goals and show how each course directly supports degree progress, enrollment status, and seat safety.</p>
+          </div>
+          <div class="goal-banner-tags">
+            <span class="pill primary">15 credits target</span>
+            <span class="pill">2 major requirements</span>
+            <span class="pill">Avoid mornings</span>
+            <span class="pill success">Stay full-time</span>
+          </div>
+        </div>
         <div class="goal-strip">
           <article class="goal-card">
             <b>Student Goal</b>
@@ -1272,7 +1554,7 @@
 
           <section class="panel">
             <div class="panel-header">
-              <h2>Smart Schedule Builder</h2>
+              <h2>Schedule builder</h2>
               <span class="pill danger" id="creditCount">10 credits planned</span>
             </div>
             <div class="panel-body">
@@ -1300,7 +1582,7 @@
               <span class="pill">Next steps</span>
             </div>
             <div class="panel-body ai-thread">
-              <div class="message ai" id="assistantMini">Add one degree-counting course to reach full-time. CSE 373 is strongest but has limited seats; INFO 380 is the safest open-seat backup.</div>
+              <div class="message advisor" id="assistantMini">Add one degree-counting course to reach full-time. CSE 373 is strongest but has limited seats; INFO 380 is the safest open-seat backup.</div>
               <div class="action-grid">
                 <button class="primary advisor-action">Send schedule to student</button>
                 <button class="advisor-action">Request override</button>
@@ -1321,7 +1603,7 @@
             <h2 id="planReviewTitle">Recommended Plan A keeps Timothy full-time and completes a CSE major requirement.</h2>
             <p id="planReviewCopy">This view highlights the decisions an advisor needs first: requirement value, registration status, credits, and risks that need explanation.</p>
             <div class="tool-group">
-              <button class="primary" id="applyAi">Apply Plan A</button>
+              <button class="primary" id="applyPlanA">Apply Plan A</button>
               <button id="jumpAlternatives">Review alternatives</button>
             </div>
           </div>
@@ -1367,7 +1649,7 @@
           <section class="panel">
             <div class="panel-header"><h2>Advisor Resolution</h2><span class="pill">Actionable</span></div>
             <div class="panel-body ai-thread">
-              <div class="message ai" id="resolutionMessage">Add INFO 380 or ENGL 282 immediately if CSE 373 fills. Both count toward progress and move Timothy above the 12-credit minimum.</div>
+              <div class="message advisor" id="resolutionMessage">Add INFO 380 or ENGL 282 immediately if CSE 373 fills. Both count toward progress and move Timothy above the 12-credit minimum.</div>
               <button class="primary" id="fixIssues">Resolve with open-seat backup</button>
               <p class="tiny-note">The prototype shows the explanation an advisor can act on before registration starts.</p>
             </div>
@@ -1395,21 +1677,21 @@
             <article class="backup-card selected">
               <div class="backup-top"><div><strong>Plan A: Best fit</strong><p class="tiny-note">CSE 373 completes the major requirement and moves Timothy to 13 credits.</p></div><span class="pill success">Best fit</span></div>
               <div class="mini-week">
-                <div class="mini-day"><span class="mini-block"></span><span class="mini-block blue"></span></div>
-                <div class="mini-day"><span class="mini-block plum"></span></div>
-                <div class="mini-day"><span class="mini-block"></span><span class="mini-block blue"></span></div>
-                <div class="mini-day"><span class="mini-block plum"></span></div>
-                <div class="mini-day"><span class="mini-block amber"></span></div>
+                <div class="mini-day"><span class="mini-block green">CSE 214</span><span class="mini-block blue">CSE 373</span></div>
+                <div class="mini-day"><span class="mini-block plum">ENGL 282</span></div>
+                <div class="mini-day"><span class="mini-block green">CSE 214</span><span class="mini-block blue">CSE 373</span></div>
+                <div class="mini-day"><span class="mini-block plum">ENGL 282</span></div>
+                <div class="mini-day"><span class="mini-block amber">Degree progress</span></div>
               </div>
               <button class="select-backup">Use Plan A</button>
             </article>
             <article class="backup-card">
               <div class="backup-top"><div><strong>Plan B: If CSE 373 fills</strong><p class="tiny-note">Uses INFO 380 to preserve major progress with open seats.</p></div><span class="pill">Backup</span></div>
               <div class="mini-week">
-                <div class="mini-day"><span class="mini-block blue"></span></div>
-                <div class="mini-day"><span class="mini-block"></span><span class="mini-block plum"></span></div>
-                <div class="mini-day"><span class="mini-block blue"></span></div>
-                <div class="mini-day"><span class="mini-block"></span><span class="mini-block plum"></span></div>
+                <div class="mini-day"><span class="mini-block blue">INFO 380</span></div>
+                <div class="mini-day"><span class="mini-block green">CSE 214</span><span class="mini-block plum">ENGL 282</span></div>
+                <div class="mini-day"><span class="mini-block blue">INFO 380</span></div>
+                <div class="mini-day"><span class="mini-block green">CSE 214</span><span class="mini-block plum">ENGL 282</span></div>
                 <div class="mini-day"></div>
               </div>
               <button class="select-backup">Use Plan B</button>
@@ -1417,11 +1699,11 @@
             <article class="backup-card">
               <div class="backup-top"><div><strong>Plan C: Open seats only</strong><p class="tiny-note">Safer registration path using only sections with strong seat availability.</p></div><span class="pill">Safest</span></div>
               <div class="mini-week">
-                <div class="mini-day"><span class="mini-block"></span></div>
-                <div class="mini-day"><span class="mini-block blue"></span></div>
-                <div class="mini-day"><span class="mini-block"></span></div>
-                <div class="mini-day"><span class="mini-block blue"></span></div>
-                <div class="mini-day"><span class="mini-block plum"></span><span class="mini-block amber"></span></div>
+                <div class="mini-day"><span class="mini-block amber">Open-seat elective</span></div>
+                <div class="mini-day"><span class="mini-block blue">INFO 380</span></div>
+                <div class="mini-day"><span class="mini-block amber">Open-seat elective</span></div>
+                <div class="mini-day"><span class="mini-block blue">INFO 380</span></div>
+                <div class="mini-day"><span class="mini-block plum">ENGL 282</span><span class="mini-block amber">Open seat</span></div>
               </div>
               <button class="select-backup">Use Plan C</button>
             </article>
@@ -1709,11 +1991,32 @@
       showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 2600);
     }
 
-    function switchScreen(id) {
+    const screenHistory = [];
+    let currentScreenId = "queue";
+
+    function updateBackButton() {
+      const backButton = document.querySelector("#goBack");
+      if (!backButton) return;
+      backButton.disabled = screenHistory.length === 0;
+    }
+
+    function switchScreen(id, { fromBack = false } = {}) {
+      if (!fromBack && currentScreenId !== id) {
+        screenHistory.push(currentScreenId);
+        if (screenHistory.length > 10) screenHistory.shift();
+      }
+      currentScreenId = id;
       screens.forEach(screen => screen.classList.toggle("active", screen.id === id));
       navButtons.forEach(button => button.classList.toggle("active", button.dataset.screen === id));
       renderStudentProfile();
+      updateBackButton();
       window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function goBack() {
+      if (!screenHistory.length) return;
+      const previous = screenHistory.pop();
+      switchScreen(previous, { fromBack: true });
     }
 
     function buildCalendarGrid() {
@@ -1749,7 +2052,12 @@
       const event = document.createElement("div");
       event.className = `event ${eventData.kind || ""}`;
       event.dataset.added = added ? "true" : "false";
-      event.innerHTML = `<b>${eventData.code}</b><span>${eventData.title}</span><span>${eventData.room}</span>`;
+      event.dataset.course = eventData.code;
+      event.innerHTML = `
+        <b>${eventData.code}</b>
+        <span>${eventData.title}</span>
+        <span>${eventData.room}</span>
+        ${added ? `<div class="event-actions"><button class="primary" data-action="toggle-add" data-course="${eventData.code}">Drop from schedule</button></div>` : ``}`;
       cell.append(event);
     }
 
@@ -1759,6 +2067,25 @@
       visibleAddedCourses().forEach(course => {
         course.meetings.forEach(meeting => renderEvent({ ...meeting, code: course.code, title: course.title, kind: course.kind, room: course.room }, true));
       });
+    }
+
+    function courseImpactBadges(course) {
+      const badges = [];
+      if (course.requirement.includes("Major")) {
+        badges.push({ text: "Counts toward major requirement", tone: "good" });
+      }
+      if (course.category === "General education" || course.requirement.includes("Writing")) {
+        badges.push({ text: "Counts toward general education", tone: "blue" });
+      }
+      if (course.availability !== "waitlist") {
+        badges.push({ text: "Counts toward full-time enrollment", tone: "success" });
+      } else {
+        badges.push({ text: "Does not count toward current enrolled credits", tone: "bad" });
+      }
+      if (course.requirement.includes("Does not count") || course.availability === "waitlist") {
+        badges.push({ text: "Does not count toward degree progress", tone: "bad" });
+      }
+      return badges;
     }
 
     function renderCourses() {
@@ -1779,6 +2106,7 @@
           const seatClass = course.availability === "waitlist" ? "seat-closed" : course.seats < 8 ? "seat-low" : "seat-open";
           const seatText = course.availability === "waitlist" ? "waitlist" : `${course.seats} seats`;
           const added = activeRecord().addedCodes.includes(course.code);
+          const impactBadges = courseImpactBadges(course).map(tag => `<span class="status-chip ${tag.tone}">${tag.text}</span>`).join("");
           card.className = "course-card";
           card.draggable = true;
           card.dataset.code = course.code;
@@ -1786,8 +2114,9 @@
             <strong>${course.code} <span class="seat-tag ${seatClass}">${seatText}</span></strong>
             <p>${course.meetings.map(m => `${m.day} ${m.time}`).join(", ")}, ${course.room}. ${course.status}.</p>
             <div class="requirement-tags">${course.tags.map(tag => `<span class="status-chip ${tag.tone}">${tag.text}</span>`).join("")}</div>
+            <div class="impact-tags">${impactBadges}</div>
             <div class="course-actions">
-              <button class="${added ? "primary" : ""}" data-add-course="${course.code}">${added ? "Added" : "Add to schedule"}</button>
+              <button class="${added ? "primary" : ""}" data-action="toggle-add" data-course="${course.code}">${added ? "Remove course" : "Add to schedule"}</button>
             </div>`;
           card.addEventListener("dragstart", () => {
             draggedCourseCode = course.code;
@@ -2096,23 +2425,50 @@
     document.querySelector("#availabilityFilter").addEventListener("change", renderCourses);
 
     document.addEventListener("click", event => {
+      const openPanels = document.querySelectorAll(".course-action-panel.visible");
+      if (openPanels.length && !event.target.closest(".course-card")) {
+        openPanels.forEach(panel => panel.classList.remove("visible"));
+      }
+
       const studentButton = event.target.closest("[data-select-student]");
       if (studentButton) {
         selectStudent(studentButton.dataset.selectStudent);
         return;
       }
+
+      const actionButton = event.target.closest("[data-action]");
+      if (actionButton) {
+        const action = actionButton.dataset.action;
+        const code = actionButton.dataset.course;
+        if (action === "toggle-add") {
+          if (activeRecord().addedCodes.includes(code)) {
+            activeRecord().addedCodes = activeRecord().addedCodes.filter(item => item !== code);
+            showToast(`${code} dropped from the schedule.`);
+          } else {
+            addCourse(code);
+          }
+          syncUI();
+        }
+        if (action === "view-details") {
+          const course = courseByCode(code);
+          if (course) showToast(`${course.code}: ${course.title}. ${course.status}. ${course.note}`);
+        }
+        return;
+      }
+
       const addButton = event.target.closest("[data-add-course]");
       if (addButton) addCourse(addButton.dataset.addCourse);
     });
 
     document.querySelector("#autoFit").addEventListener("click", () => applyPlan("A"));
     document.querySelector("#clearAdds").addEventListener("click", clearAddedCourses);
-    document.querySelector("#applyAi").addEventListener("click", () => {
+    document.querySelector("#applyPlanA").addEventListener("click", () => {
       applyPlan("A");
       switchScreen("builder");
     });
     document.querySelector("#jumpAlternatives").addEventListener("click", () => switchScreen("alternatives"));
     document.querySelector("#viewNextSteps").addEventListener("click", () => switchScreen("nextSteps"));
+    document.querySelector("#goBack").addEventListener("click", goBack);
     document.querySelector("#runChecks").addEventListener("click", () => {
       renderWarnings();
       showToast("Warnings refreshed from the current schedule.");
